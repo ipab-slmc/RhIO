@@ -32,6 +32,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall")
 add_library(rhio_common SHARED ${SOURCES})
 
 #Install rules
-install(TARGETS rhio_common DESTINATION lib)
-install(DIRECTORY include/ DESTINATION include)
+install(
+    DIRECTORY include/ 
+    DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})
+install(
+    TARGETS rhio_common 
+    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 

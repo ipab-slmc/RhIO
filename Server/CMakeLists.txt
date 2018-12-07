@@ -85,6 +85,10 @@ if (BUILD_RHIO_EXAMPLES)
 endif (BUILD_RHIO_EXAMPLES)
 
 #Install rules
-install(TARGETS rhio_server DESTINATION lib)
-install(DIRECTORY include/ DESTINATION include)
+install(
+    DIRECTORY include/ 
+    DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})
+install(
+    TARGETS rhio_server 
+    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 

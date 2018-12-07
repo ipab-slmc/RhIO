@@ -47,6 +47,10 @@ add_library(rhio_client SHARED ${SOURCES})
 target_link_libraries(rhio_client ${RHIO_LIBRARIES})
 
 #Install rules
-install(TARGETS rhio_client DESTINATION lib)
-install(DIRECTORY include/ DESTINATION include)
+install(
+    DIRECTORY include/ 
+    DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})
+install(
+    TARGETS rhio_client 
+    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 

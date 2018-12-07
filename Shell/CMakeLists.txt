@@ -104,5 +104,8 @@ endif ()
 add_executable (rhio ${SOURCES})
 target_link_libraries (rhio ${EXTRA_LIBS})
 
-install(TARGETS rhio DESTINATION bin)
+#Install rules
+install(
+    TARGETS rhio 
+    DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
