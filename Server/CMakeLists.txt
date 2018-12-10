@@ -13,11 +13,12 @@ find_package(catkin REQUIRED COMPONENTS
 
 # What is published by the 'rhio_server package'
 catkin_package(
-    INCLUDE_DIRS include
+    INCLUDE_DIRS include/
     LIBRARIES rhio_server
     CATKIN_DEPENDS 
         libzmq_catkin
         rhio_common 
+    CFG_EXTRAS rhio_server.cmake
 )
 
 #Option for compiling Examples
@@ -87,7 +88,7 @@ endif (BUILD_RHIO_EXAMPLES)
 #Install rules
 install(
     DIRECTORY include/ 
-    DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 install(
     TARGETS rhio_server 
     DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
