@@ -20,7 +20,7 @@ catkin_package(
     rhio_common 
 )
 
-#Include sources directory
+#Include directories
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 #Sources files

@@ -26,7 +26,7 @@ option(BUILD_RHIO_EXAMPLES "Build RhIO Examples" OFF)
 #The server automatically start on program startup (RhIO::start())
 option(RHIO_SERVER_AUTOSTART "Autostart RhIO server" OFF)
 
-#Include sources directory
+#Include directories
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 #Sources files

@@ -58,7 +58,9 @@ set (SOURCES
     src/main.cpp
 )
 
-include_directories (src ${catkin_INCLUDE_DIRS})
+include_directories(
+    src
+    ${catkin_INCLUDE_DIRS})
 
 set (EXTRA_LIBS
     pthread 

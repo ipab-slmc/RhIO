@@ -14,7 +14,7 @@ catkin_package(
   LIBRARIES rhio_common
 )
 
-#Include sources directory
+#Include directories
 include_directories(include/)
 
 #Sources files
