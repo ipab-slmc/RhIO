@@ -3,14 +3,14 @@ project (rhio_shell)
 
 
 find_package(catkin REQUIRED COMPONENTS
-    uoe_zmq
+    libzmq_catkin
     rhio_client
 )
 
 catkin_package(
     INCLUDE_DIRS .
     CATKIN_DEPENDS 
-        uoe_zmq
+        libzmq_catkin
         rhio_client
 )
 

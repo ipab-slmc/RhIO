@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8)
 project(rhio_client)
 
 find_package(catkin REQUIRED COMPONENTS
-  uoe_zmq
+  libzmq_catkin
   rhio_common
 )
 
@@ -16,7 +16,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES rhio_client
   CATKIN_DEPENDS 
-    uoe_zmq
+    libzmq_catkin
     rhio_common 
 )
 
