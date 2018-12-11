@@ -876,11 +876,10 @@ std::vector<std::string> ValueNode::listValuesStr() const
     return list;
 }
         
-void ValueNode::saveValues(const std::string& path)
+bool ValueNode::isNeededSaveValue() const
 {
     std::lock_guard<std::mutex> lock(_mutex);
 
-    //Check that some values have to be saved
     bool hasValues = false;
     for (const auto& v : _valuesBool) {
         if (v.second.persisted) hasValues = true;
@@ -894,9 +893,19 @@ void ValueNode::saveValues(const std::string& path)
     for (const auto& v : _valuesStr) {
         if (v.second.persisted) hasValues = true;
     }
+
+    return hasValues;
+}
+        
+void ValueNode::saveValues(const std::string& path)
+{
+    //Check that some values have to be saved
+    bool hasValues = isNeededSaveValue();
     if (!hasValues) {
         return;
     }
+
+    std::lock_guard<std::mutex> lock(_mutex);
 
     //Open values.yaml file
     std::ofstream file;
@@ -921,7 +930,11 @@ void ValueNode::saveValues(const std::string& path)
     for (auto& v : _valuesBool) {
         if (v.second.persisted) {
             out << YAML::Key << v.second.name;
-            out << YAML::Value << v.second.value;
+            if (v.second.value) {
+                out << YAML::Value << "true";
+            } else {
+                out << YAML::Value << "false";
+            }
             //Update persisted value
             v.second.valuePersisted = v.second.value;
         }

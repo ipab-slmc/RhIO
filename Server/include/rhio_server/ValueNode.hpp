@@ -204,6 +204,12 @@ class ValueNode : public BaseNode<ValueNode>
     protected:
 
         /**
+         * Return true of the node has 
+         * persisted values to be saved
+         */
+        bool isNeededSaveValue() const;
+
+        /**
          * Save all values into given path
          */
         void saveValues(const std::string& path);
