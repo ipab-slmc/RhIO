@@ -1,0 +1,4 @@
+- git:
+    local-name: libzmq_catkin
+    uri: https://github.com/ipab-slmc/libzmq_catkin.git
+    version: master
