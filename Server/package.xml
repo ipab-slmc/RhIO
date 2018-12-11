@@ -26,7 +26,9 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>libzmq_catkin</build_depend>
   <build_depend>rhio_common</build_depend>
+  <build_depend>yaml-cpp</build_depend>
 
   <run_depend>libzmq_catkin</run_depend>
   <run_depend>rhio_common</run_depend>
+  <run_depend>yaml-cpp</run_depend>
 </package>
