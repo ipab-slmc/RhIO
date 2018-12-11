@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <dirent.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "rhio_server/Filesystem.hpp"
@@ -29,7 +30,17 @@ std::vector<std::string> listDirectories(const std::string& path)
      std::vector<std::string> list;
      struct dirent* dirList;
      while ((dirList = readdir(dir)) != nullptr) {
-         if (dirList->d_type == DT_DIR) {
+         std::string filepath;
+         if (path.length() > 0 && path.back() != '/') {
+            filepath = path + "/" + std::string(dirList->d_name);
+         } else {
+            filepath = path + std::string(dirList->d_name);
+         }
+         struct stat file_info;
+         if (stat(filepath.c_str(), &file_info) != 0) {
+             continue;
+         }
+         if (S_ISDIR(file_info.st_mode)) {
              list.push_back(std::string(dirList->d_name));
          }
      }
@@ -49,7 +60,17 @@ std::vector<std::string> listFiles(const std::string& path)
      std::vector<std::string> list;
      struct dirent* dirList;
      while ((dirList = readdir(dir)) != nullptr) {
-         if (dirList->d_type == DT_REG) {
+         std::string filepath;
+         if (path.length() > 0 && path.back() != '/') {
+            filepath = path + "/" + std::string(dirList->d_name);
+         } else {
+            filepath = path + std::string(dirList->d_name);
+         }
+         struct stat file_info;
+         if (stat(filepath.c_str(), &file_info) != 0) {
+             continue;
+         }
+         if (S_ISREG(file_info.st_mode)) {
              list.push_back(std::string(dirList->d_name));
          }
      }
