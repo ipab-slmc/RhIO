@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include "CommandNode.hpp"
+#include "rhio_server/CommandNode.hpp"
 #include "RhIO.hpp"
 
 namespace RhIO {

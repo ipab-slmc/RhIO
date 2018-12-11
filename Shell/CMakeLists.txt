@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 2.8)
-project (RhIOShell)
+project (rhio_shell)
 
 
 find_package(catkin REQUIRED COMPONENTS
-  RhIOClient
-  jsoncpp
-  )
+    libzmq_catkin
+    rhio_client
+)
 
 catkin_package(
-  INCLUDE_DIRS .
-  CATKIN_DEPENDS RhIOClient jsoncpp
+    INCLUDE_DIRS .
+    CATKIN_DEPENDS 
+        libzmq_catkin
+        rhio_client
 )
 
 # Enable colors ?
@@ -56,10 +58,13 @@ set (SOURCES
     src/main.cpp
 )
 
-include_directories (src ${catkin_INCLUDE_DIRS})
+include_directories(
+    src
+    ${catkin_INCLUDE_DIRS})
 
 set (EXTRA_LIBS
     pthread 
+    jsoncpp
     ${catkin_LIBRARIES}
 )
 
@@ -101,5 +106,8 @@ endif ()
 add_executable (rhio ${SOURCES})
 target_link_libraries (rhio ${EXTRA_LIBS})
 
-install(TARGETS rhio DESTINATION bin)
+#Install rules
+install(
+    TARGETS rhio 
+    DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 

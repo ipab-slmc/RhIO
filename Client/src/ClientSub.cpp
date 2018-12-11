@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include <chrono>
-#include "ClientSub.hpp"
-#include "Protocol.hpp"
-#include "DataBuffer.hpp"
+#include "rhio_client/ClientSub.hpp"
+#include "rhio_common/Protocol.hpp"
+#include "rhio_common/DataBuffer.hpp"
 
 namespace RhIO {
         
@@ -64,11 +64,11 @@ void ClientSub::subscriberThread(const std::string& endpoint)
     //ZMQ context
     zmq::context_t context(1);
     //ZMQ socket
-    zmq::socket_t socket(context, ZMQ_SUB);
+    zmq::socket_t socket(context, ZMQ_DISH);
     //Connection to Server
-    socket.connect(endpoint.c_str());
-    //Subscribing to all
-    socket.setsockopt(ZMQ_SUBSCRIBE, "", 0);
+    socket.bind(endpoint.c_str());
+    //Subscribing to rhio group
+    socket.join("rhio");
 
     while (_isContinue) {
         //Wait for Server next packet
@@ -76,7 +76,7 @@ void ClientSub::subscriberThread(const std::string& endpoint)
         if (!socket.recv(&packet, ZMQ_NOBLOCK)) {
             //If no data is available wait a bit
             std::this_thread::sleep_for(
-                std::chrono::milliseconds(10));
+                std::chrono::milliseconds(1));
             continue;
         }
         DataBuffer sub(packet.data(), packet.size());

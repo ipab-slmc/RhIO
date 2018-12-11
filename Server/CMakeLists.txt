@@ -4,28 +4,31 @@
 ###
 
 cmake_minimum_required(VERSION 2.8)
-project(RhIOServer)
+project(rhio_server)
 
 find_package(catkin REQUIRED COMPONENTS
-  RhIOCommon
-  ZeroMQ
-  )
+    libzmq_catkin
+    rhio_common
+)
 
-# What is published by the 'RhIOServer package'
+# What is published by the 'rhio_server package'
 catkin_package(
-  INCLUDE_DIRS src
-  LIBRARIES RhIO
-  CATKIN_DEPENDS RhIOCommon ZeroMQ
+    INCLUDE_DIRS include/
+    LIBRARIES rhio_server
+    CATKIN_DEPENDS 
+        libzmq_catkin
+        rhio_common 
+    CFG_EXTRAS rhio_server.cmake
 )
 
 #Option for compiling Examples
 option(BUILD_RHIO_EXAMPLES "Build RhIO Examples" OFF)
 
 #The server automatically start on program startup (RhIO::start())
-option(RHIO_SERVER_AUTOSTART "Autostart RhIO server" ON)
+option(RHIO_SERVER_AUTOSTART "Autostart RhIO server" OFF)
 
-#Include sources directory
-include_directories(src ${catkin_INCLUDE_DIRS})
+#Include directories
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 #Sources files
 set(SOURCES
@@ -44,6 +47,7 @@ set(SOURCES
 
 #Needed Libraries
 set(RHIO_LIBRARIES
+    yaml-cpp
     pthread
     ${catkin_LIBRARIES}
 )
@@ -56,25 +60,36 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #Enable compiler Warning
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall")
+#Enable ZMP Draft API for UDP support
+add_definitions(-DZMQ_BUILD_DRAFT_API)
 
-#Build Server and Client as shared library
-add_library(RhIO SHARED ${SOURCES})
-target_link_libraries(RhIO ${RHIO_LIBRARIES})
+#Build Server as shared library
+add_library(rhio_server SHARED ${SOURCES})
+target_link_libraries(rhio_server ${RHIO_LIBRARIES})
 
 #Build Examples
 if (BUILD_RHIO_EXAMPLES)
     add_executable(exampleIntro Examples/exampleIntro.cpp)
-    target_link_libraries(exampleIntro RhIO)
+    target_link_libraries(exampleIntro rhio_server)
 
     add_executable(exampleValues Examples/exampleValues.cpp)
-    target_link_libraries(exampleValues RhIO)
+    target_link_libraries(exampleValues rhio_server)
 
     add_executable(exampleStreamsAndCommands Examples/exampleStreamsAndCommands.cpp)
-    target_link_libraries(exampleStreamsAndCommands RhIO)
+    target_link_libraries(exampleStreamsAndCommands rhio_server)
 
     add_executable(exampleFrames Examples/exampleFrames.cpp)
-    target_link_libraries(exampleFrames RhIO)
+    target_link_libraries(exampleFrames rhio_server)
 
     add_executable(exampleBind Examples/exampleBind.cpp)
-    target_link_libraries(exampleBind RhIO)
+    target_link_libraries(exampleBind rhio_server)
 endif (BUILD_RHIO_EXAMPLES)
+
+#Install rules
+install(
+    DIRECTORY include/ 
+    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+install(
+    TARGETS rhio_server 
+    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+

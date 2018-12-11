@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <list>
-#include "ServerRep.hpp"
-#include "Protocol.hpp"
+#include "rhio_server/ServerRep.hpp"
+#include "rhio_common/Protocol.hpp"
 #include "RhIO.hpp"
 
 namespace RhIO {
@@ -13,7 +13,7 @@ ServerRep::ServerRep(std::string endpoint) :
 {
     if (endpoint == "") {
         std::stringstream ss;
-        ss << "tcp://*:" << (ServersPortBase + 1);
+        ss << "tcp://*:" << PortServerRep;
         endpoint = ss.str();
     }
 
@@ -104,17 +104,26 @@ void ServerRep::handleRequest()
             case MsgDisableStreamingValue:
                   disableStreamingValue(req);
                   return;
+            case MsgCheckStreamingValue:
+                  checkStreamingValue(req);
+                  return;
             case MsgEnableStreamingStream:
                   enableStreamingStream(req);
                   return;
             case MsgDisableStreamingStream:
                   disableStreamingStream(req);
                   return;
+            case MsgCheckStreamingStream:
+                  checkStreamingStream(req);
+                  return;
             case MsgEnableStreamingFrame:
                   enableStreamingFrame(req);
                   return;
             case MsgDisableStreamingFrame:
                   disableStreamingFrame(req);
+                  return;
+            case MsgCheckStreamingFrame:
+                  checkStreamingFrame(req);
                   return;
             case MsgAskSave:
                   save(req);
@@ -481,7 +490,7 @@ void ServerRep::valMetaBool(DataBuffer& buffer)
     rep.writeBool(val.hasMin);
     rep.writeBool(val.hasMax);
     rep.writeBool(val.persisted);
-    rep.writeInt(val.streamWatchers);
+    rep.writeInt(val.streamWatchers.load());
     
     rep.writeBool(val.min);
     rep.writeBool(val.max);
@@ -512,7 +521,7 @@ void ServerRep::valMetaInt(DataBuffer& buffer)
     rep.writeBool(val.hasMin);
     rep.writeBool(val.hasMax);
     rep.writeBool(val.persisted);
-    rep.writeInt(val.streamWatchers);
+    rep.writeInt(val.streamWatchers.load());
     
     rep.writeInt(val.min);
     rep.writeInt(val.max);
@@ -543,7 +552,7 @@ void ServerRep::valMetaFloat(DataBuffer& buffer)
     rep.writeBool(val.hasMin);
     rep.writeBool(val.hasMax);
     rep.writeBool(val.persisted);
-    rep.writeInt(val.streamWatchers);
+    rep.writeInt(val.streamWatchers.load());
     
     rep.writeFloat(val.min);
     rep.writeFloat(val.max);
@@ -575,7 +584,7 @@ void ServerRep::valMetaStr(DataBuffer& buffer)
     rep.writeBool(val.hasMin);
     rep.writeBool(val.hasMax);
     rep.writeBool(val.persisted);
-    rep.writeInt(val.streamWatchers);
+    rep.writeInt(val.streamWatchers.load());
     
     rep.writeStr(val.min);
     rep.writeStr(val.max);
@@ -606,6 +615,21 @@ void ServerRep::disableStreamingValue(DataBuffer& buffer)
     std::string name = buffer.readStr();
     //Update streaming mode
     RhIO::Root.disableStreamingValue(name);
+
+    //Allocate message data
+    zmq::message_t reply(sizeof(MsgType));
+    DataBuffer rep(reply.data(), reply.size());
+    rep.writeType(MsgStreamingOK);
+
+    //Send reply
+    _socket.send(reply);
+}
+void ServerRep::checkStreamingValue(DataBuffer& buffer)
+{
+    //Get asked value name
+    std::string name = buffer.readStr();
+    //Update streaming mode
+    RhIO::Root.checkStreamingValue(name);
 
     //Allocate message data
     zmq::message_t reply(sizeof(MsgType));
@@ -646,6 +670,21 @@ void ServerRep::disableStreamingStream(DataBuffer& buffer)
     //Send reply
     _socket.send(reply);
 }
+void ServerRep::checkStreamingStream(DataBuffer& buffer)
+{
+    //Get asked stream name
+    std::string name = buffer.readStr();
+    //Update streaming mode
+    RhIO::Root.checkStreamingStream(name);
+
+    //Allocate message data
+    zmq::message_t reply(sizeof(MsgType));
+    DataBuffer rep(reply.data(), reply.size());
+    rep.writeType(MsgStreamingOK);
+
+    //Send reply
+    _socket.send(reply);
+}
 
 void ServerRep::enableStreamingFrame(DataBuffer& buffer)
 {
@@ -668,6 +707,21 @@ void ServerRep::disableStreamingFrame(DataBuffer& buffer)
     std::string name = buffer.readStr();
     //Update streaming mode
     RhIO::Root.disableStreamingFrame(name);
+
+    //Allocate message data
+    zmq::message_t reply(sizeof(MsgType));
+    DataBuffer rep(reply.data(), reply.size());
+    rep.writeType(MsgStreamingOK);
+
+    //Send reply
+    _socket.send(reply);
+}
+void ServerRep::checkStreamingFrame(DataBuffer& buffer)
+{
+    //Get asked frame name
+    std::string name = buffer.readStr();
+    //Update streaming mode
+    RhIO::Root.checkStreamingFrame(name);
 
     //Allocate message data
     zmq::message_t reply(sizeof(MsgType));
