@@ -157,6 +157,12 @@ class IONode final : public ValueNode,
         IONode* forwardChildren(
             const std::string& name, std::string& newName,
             bool createBranch);
+
+        /**
+         * Return true of the current subtree
+         * has data to be saved
+         */
+        bool isNeededSave() const;
 };
 
 }

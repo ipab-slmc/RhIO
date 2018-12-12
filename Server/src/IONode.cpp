@@ -204,6 +204,10 @@ std::vector<std::string> IONode::listChildren() const
         
 void IONode::save(const std::string& path)
 {
+    if (!isNeededSave()) {
+        return;
+    }
+
     std::lock_guard<std::mutex> lock(_mutex);
     std::vector<std::string> list;
     try {
@@ -232,7 +236,7 @@ void IONode::save(const std::string& path)
                 break;
             }
         }
-        if (!found) {
+        if (!found && c.second->isNeededSave()) {
             createDirectory(path, c.first);
         }
     }
@@ -411,6 +415,18 @@ IONode* IONode::forwardChildren(
     } else {
         return nullptr;
     }
+}
+        
+bool IONode::isNeededSave() const
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    
+    bool needSave = ValueNode::isNeededSaveValue();
+    for (auto& c : _children) {
+        needSave = needSave || c.second->isNeededSave();
+    }
+
+    return needSave;
 }
 
 }

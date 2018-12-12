@@ -13,7 +13,7 @@ namespace RhIO {
 /**
  * ServerPub
  *
- * Implement Streaming  publisher
+ * Implement Streaming publisher
  * using ZMQ network library
  */
 class ServerPub
@@ -97,7 +97,7 @@ class ServerPub
 
         /**
          * Lock free double buffer for RT publish
-         * of boll, int, float and str values and streams
+         * of bool, int, float and str values and streams
          */
         LockFreeDoubleQueue<PubValBool> _bufferBool;
         LockFreeDoubleQueue<PubValInt> _bufferInt;

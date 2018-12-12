@@ -5,13 +5,9 @@
 
 int main() 
 {
-    if (!RhIO::started()) {
-        RhIO::start();
-    }
-    assert(RhIO::started());
-
     RhIO::Root.newChild("test");
     RhIO::Root.newChild("test2/test3");
+    RhIO::Root.newChild("test6/test7");
 
     RhIO::Root.newBool("paramBool")
         ->comment("bool parameter")
