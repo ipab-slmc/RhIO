@@ -5,6 +5,7 @@
 #include <yaml-cpp/yaml.h>
 #include "rhio_server/ValueNode.hpp"
 #include "rhio_server/ServerPub.hpp"
+#include "rhio_server/ServerLog.hpp"
 #include "RhIO.hpp"
 
 namespace RhIO {
@@ -181,6 +182,12 @@ void ValueNode::setBool(const std::string& name, bool val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logBool(
+            BaseNode::pwd + separator + name, 
+            val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
     }
 }
 void ValueNode::setInt(const std::string& name, int64_t val,
@@ -228,6 +235,12 @@ void ValueNode::setInt(const std::string& name, int64_t val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logInt(
+            BaseNode::pwd + separator + name, 
+            val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
     }
 }
 void ValueNode::setFloat(const std::string& name, double val,
@@ -275,6 +288,12 @@ void ValueNode::setFloat(const std::string& name, double val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logFloat(
+            BaseNode::pwd + separator + name, 
+            val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
     }
 }
 void ValueNode::setStr(const std::string& name, const std::string& val,
@@ -322,6 +341,12 @@ void ValueNode::setStr(const std::string& name, const std::string& val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logStr(
+            BaseNode::pwd + separator + name, 
+            val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
     }
 }
 
@@ -357,6 +382,12 @@ void ValueNode::setRTBool(const std::string& name, bool val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logBool(
+            BaseNode::pwd + separator + name, 
+            val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
     }
 }
 void ValueNode::setRTInt(const std::string& name, int64_t val,
@@ -391,6 +422,12 @@ void ValueNode::setRTInt(const std::string& name, int64_t val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logInt(
+            BaseNode::pwd + separator + name, 
+            val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
     }
 }
 void ValueNode::setRTFloat(const std::string& name, double val,
@@ -425,6 +462,12 @@ void ValueNode::setRTFloat(const std::string& name, double val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logFloat(
+            BaseNode::pwd + separator + name, 
+            val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
     }
 }
 
@@ -447,6 +490,12 @@ int64_t ValueNode::addRTInt(const std::string& name, int64_t val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        //Log value
+        ServerLogging->logInt(
+            BaseNode::pwd + separator + name, 
+            fetch + val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
         return fetch;
     }
 }
@@ -469,6 +518,11 @@ int64_t ValueNode::subRTInt(const std::string& name, int64_t val,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        ServerLogging->logInt(
+            BaseNode::pwd + separator + name, 
+            fetch - val,
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
         return fetch;
     }
 }
@@ -492,6 +546,11 @@ bool ValueNode::toggleRTBool(const std::string& name,
                 std::chrono::duration_cast<std::chrono::microseconds>
                     (timestamp.time_since_epoch()).count());
         }
+        ServerLogging->logBool(
+            BaseNode::pwd + separator + name, 
+            (!(bool)fetch),
+            std::chrono::duration_cast<std::chrono::microseconds>
+                (timestamp.time_since_epoch()).count());
         return (bool)fetch;
     }
 }

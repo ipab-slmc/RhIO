@@ -21,6 +21,7 @@ include_directories(include/)
 set(SOURCES
     src/DataBuffer.cpp
     src/Protocol.cpp
+    src/Logging.cpp
 )
 
 #Enable C++11

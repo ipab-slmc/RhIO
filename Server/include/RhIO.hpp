@@ -15,10 +15,17 @@ extern IONode Root;
 
 /**
  * Internal pointer to the instance of
- * the publisher server runngin in its thread
+ * the publisher server running in its thread
  */
 class ServerPub;
 extern ServerPub* ServerStream;
+
+/**
+ * Internal pointer to the instance of
+ * the logging server running in its thread
+ */
+class ServerLog;
+extern ServerLog* ServerLogging;
 
 /**
  * Start the RhIO server.
@@ -49,6 +56,12 @@ bool started();
  * tree and reset it
  */
 void reset();
+
+/**
+ * Write all logged data into 
+ * a file of given path
+ */
+void writeLogs(const std::string& filepath);
 
 }
 

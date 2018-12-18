@@ -8,6 +8,7 @@
 #include "RhIO.hpp"
 #include "rhio_server/ServerRep.hpp"
 #include "rhio_server/ServerPub.hpp"
+#include "rhio_server/ServerLog.hpp"
 
 namespace RhIO {
 
@@ -18,9 +19,10 @@ IONode Root("ROOT", nullptr);
 
 /**
  * Default initialization of 
- * ServerStream server
+ * ServerStream and ServerLogging server
  */
 ServerPub* ServerStream = nullptr;
+ServerLog* ServerLogging = nullptr;
 
 /**
  * Atomic register storing the number
@@ -30,13 +32,15 @@ ServerPub* ServerStream = nullptr;
 static std::atomic<int> initServerCount;
 
 /**
- * Server Pub and Rep thread instance
+ * Server Pub, Log and Rep thread instance
  * and quit state
  */
 static std::thread* serverThreadRep = nullptr;
 static std::thread* serverThreadPub = nullptr;
+static std::thread* serverThreadLog = nullptr;
 static bool serverThreadRepOver = false;
 static bool serverThreadPubOver = false;
+static bool serverThreadLogOver = false;
 static unsigned int portRep = PortServerRep;
 static unsigned int portPub = PortServerPub;
 static unsigned int period = 20;
@@ -142,6 +146,45 @@ static void runServerPub()
     }
 }
 
+/**
+ * Logging Server main loop handling
+ * memory allocation
+ */
+static void runServerLog()
+{
+    try {
+        //Allocating ServerLogging
+        ServerLog server;
+        ServerLogging = &server;
+        //Notify main thread 
+        //for initialization ready
+        initServerCount++;
+        
+        //Set thread name
+        prctl(PR_SET_NAME, "rhio_server_log", 0, 0, 0);
+
+        while (!serverThreadLogOver) {
+            int64_t tsStart = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now().time_since_epoch()).count();
+            server.tick();
+            int64_t tsEnd = std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now().time_since_epoch()).count();
+            int64_t duration = tsEnd - tsStart;
+            //Logging value at target frequency (default is 50Hz)
+            if (duration < period) {
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(period-duration));
+            }
+        }
+        initServerCount--;
+    } catch (const std::string& e) {
+        raiseSignalAndHold(e);
+    } catch (const std::exception& e) {
+        raiseSignalAndHold(e.what());
+    } catch (...) {
+        raiseSignalAndHold("");
+    }
+}
 void start(
     unsigned int portRep_, 
     unsigned int portPub_, 
@@ -157,11 +200,13 @@ void start(
     //Start Server threads
     serverThreadRepOver = false;
     serverThreadPubOver = false;
+    serverThreadLogOver = false;
     serverThreadRep = new std::thread(runServerRep);
     serverThreadPub = new std::thread(runServerPub);
+    serverThreadLog = new std::thread(runServerLog);
 
     //Wait until both Server are initialized
-    while (initServerCount != 2) {
+    while (initServerCount != 3) {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(10));
     }
@@ -176,10 +221,13 @@ void stop()
 {
     if (initServerCount > 0) {
         //Wait the end of server thread
-        serverThreadRepOver = true;
+        serverThreadLogOver = true;
         serverThreadPubOver = true;
+        serverThreadRepOver = true;
+        serverThreadLog->join();
         serverThreadPub->join();
         serverThreadRep->join();
+        delete serverThreadLog;
         delete serverThreadPub;
         delete serverThreadRep;
     }
@@ -192,6 +240,13 @@ void reset()
     //Call constructor with 
     //placement allocation
     new (&Root) IONode("ROOT", nullptr);
+}
+
+void writeLogs(const std::string& filepath)
+{
+    //Dump data from log 
+    //server to file
+    ServerLogging->writeLogsToFile(filepath);
 }
 
 /**

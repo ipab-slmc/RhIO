@@ -38,6 +38,7 @@ set(SOURCES
     src/Filesystem.cpp
     src/RhIO.cpp
     src/ServerPub.cpp
+    src/ServerLog.cpp
     src/ServerRep.cpp
     src/Stream.cpp
     src/StreamNode.cpp
