@@ -89,5 +89,8 @@ if (CATKIN_ENABLE_TESTING)
 
     add_executable(benchValues src/benchValues.cpp)
     target_link_libraries(benchValues ${RHIO_LIBRARIES})
+    
+    add_executable(testLogRead src/testLogRead.cpp)
+    target_link_libraries(testLogRead ${RHIO_LIBRARIES})
 endif (CATKIN_ENABLE_TESTING)
 

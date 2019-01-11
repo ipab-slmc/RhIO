@@ -14,6 +14,18 @@ int main()
     }
     
     RhIO::Root.newInt("cycle");
+    
+    RhIO::Root.newCommand("/write_logs",
+        "Write RhIO logs to file",
+        [](const std::vector<std::string>& args) -> std::string
+        {
+            if (args.size()!=1) {
+                return "Usage: write_logs arg";
+            } else {
+                RhIO::writeLogs(args[0]);
+                return "Data written to: " + args[0];
+            }
+        });
 
     size_t cycle = 0;
     auto timeStart = std::chrono::steady_clock::now();
