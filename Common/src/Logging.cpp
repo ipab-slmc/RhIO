@@ -243,6 +243,135 @@ errorCase:
 
     return false;
 }
+bool RhIOReadBinaryLog(
+    std::ifstream& is,
+    std::map<std::string, std::vector<LogValBool>>& containerBool,
+    std::map<std::string, std::vector<LogValInt>>& containerInt,
+    std::map<std::string, std::vector<LogValFloat>>& containerFloat,
+    std::map<std::string, std::vector<LogValStr>>& containerStr)
+{
+    //Reset containers
+    containerBool.clear();
+    containerInt.clear();
+    containerFloat.clear();
+    containerStr.clear();
+    
+    size_t sizeMapBool = 0;
+    size_t sizeMapInt = 0;
+    size_t sizeMapFloat = 0;
+    size_t sizeMapStr = 0;
+    size_t sizeValBool = 0;
+    size_t sizeValInt = 0;
+    size_t sizeValFloat = 0;
+    size_t sizeValStr = 0;
+    std::map<size_t, std::string> mappingInvBool;
+    std::map<size_t, std::string> mappingInvInt;
+    std::map<size_t, std::string> mappingInvFloat;
+    std::map<size_t, std::string> mappingInvStr;
+    
+    //Read value name mapping sizes
+    if (!is.good() || is.peek() == EOF) goto errorCase;
+    readBinary(is, sizeMapBool);
+    readBinary(is, sizeMapInt);
+    readBinary(is, sizeMapFloat);
+    readBinary(is, sizeMapStr);
+    
+    //Read name mapping
+    for (size_t i=0;i<sizeMapBool;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        std::string name;
+        size_t id;
+        readBinary(is, name);
+        readBinary(is, id);
+        mappingInvBool.insert(std::make_pair(id, name));
+        containerBool.insert(std::make_pair(
+            name, std::vector<LogValBool>()));
+    }
+    for (size_t i=0;i<sizeMapInt;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        std::string name;
+        size_t id;
+        readBinary(is, name);
+        readBinary(is, id);
+        mappingInvInt.insert(std::make_pair(id, name));
+        containerInt.insert(std::make_pair(
+            name, std::vector<LogValInt>()));
+    }
+    for (size_t i=0;i<sizeMapFloat;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        std::string name;
+        size_t id;
+        readBinary(is, name);
+        readBinary(is, id);
+        mappingInvFloat.insert(std::make_pair(id, name));
+        containerFloat.insert(std::make_pair(
+            name, std::vector<LogValFloat>()));
+    }
+    for (size_t i=0;i<sizeMapStr;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        std::string name;
+        size_t id;
+        readBinary(is, name);
+        readBinary(is, id);
+        mappingInvStr.insert(std::make_pair(id, name));
+        containerStr.insert(std::make_pair(
+            name, std::vector<LogValStr>()));
+    }
+    
+    //Read value data point sizes
+    if (!is.good() || is.peek() == EOF) goto errorCase;
+    readBinary(is, sizeValBool);
+    readBinary(is, sizeValInt);
+    readBinary(is, sizeValFloat);
+    readBinary(is, sizeValStr);
+
+    //Read value data points
+    for (size_t i=0;i<sizeValBool;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        LogValBool val;
+        readBinary(is, val.id);
+        readBinary(is, val.timestamp);
+        readBinary(is, val.value);
+        containerBool.at(mappingInvBool.at(val.id)).push_back(val);
+    }
+    for (size_t i=0;i<sizeValInt;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        LogValInt val;
+        readBinary(is, val.id);
+        readBinary(is, val.timestamp);
+        readBinary(is, val.value);
+        containerInt.at(mappingInvInt.at(val.id)).push_back(val);
+    }
+    for (size_t i=0;i<sizeValFloat;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        LogValFloat val;
+        readBinary(is, val.id);
+        readBinary(is, val.timestamp);
+        readBinary(is, val.value);
+        containerFloat.at(mappingInvFloat.at(val.id)).push_back(val);
+    }
+    for (size_t i=0;i<sizeValStr;i++) {
+        if (!is.good() || is.peek() == EOF) goto errorCase;
+        LogValStr val;
+        readBinary(is, val.id);
+        readBinary(is, val.timestamp);
+        readBinary(is, val.value);
+        containerStr.at(mappingInvStr.at(val.id)).push_back(val);
+    }
+    
+    return true;
+    
+    //Reading error case
+errorCase:
+
+    //Reset containers
+    containerBool.clear();
+    containerInt.clear();
+    containerFloat.clear();
+    containerStr.clear();
+
+    return false;
+}
 
 }
 

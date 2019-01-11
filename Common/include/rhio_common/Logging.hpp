@@ -67,6 +67,12 @@ bool RhIOReadBinaryLog(
     std::vector<LogValInt>& valuesInt,
     std::vector<LogValFloat>& valuesFloat,
     std::vector<LogValStr>& valuesStr);
+bool RhIOReadBinaryLog(
+    std::ifstream& is,
+    std::map<std::string, std::vector<LogValBool>>& containerBool,
+    std::map<std::string, std::vector<LogValInt>>& containerInt,
+    std::map<std::string, std::vector<LogValFloat>>& containerFloat,
+    std::map<std::string, std::vector<LogValStr>>& containerStr);
 
 }
 
