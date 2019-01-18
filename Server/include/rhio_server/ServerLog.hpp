@@ -5,7 +5,7 @@
 #include <list>
 #include <mutex>
 #include "RhIO.hpp"
-#include "rhio_server/LockFreeDoubleQueue.hpp"
+#include "rhio_common/LockFreeDoubleQueue.hpp"
 #include "rhio_common/Logging.hpp"
 
 namespace RhIO {
