@@ -4,6 +4,8 @@
 #include <vector>
 #include <atomic>
 
+namespace RhIO {
+
 /**
  * LockFreeDoubleQueue
  *
@@ -174,6 +176,8 @@ class LockFreeDoubleQueue
         std::vector<T> _buffer1;
         std::vector<T> _buffer2;
 };
+
+}
 
 #endif
 

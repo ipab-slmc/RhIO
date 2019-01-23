@@ -1,6 +1,7 @@
 #ifndef RHIO_SERVERLOG_HPP
 #define RHIO_SERVERLOG_HPP
 
+#include <vector>
 #include <string>
 #include <list>
 #include <mutex>
