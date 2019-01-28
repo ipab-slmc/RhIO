@@ -1,6 +1,5 @@
 #include <stdexcept>
 #include <iomanip>
-#include <chrono>
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 #include "rhio_server/ValueNode.hpp"
@@ -139,7 +138,7 @@ double ValueNode::getRTFloat(const std::string& name) const
 
 void ValueNode::setBool(const std::string& name, bool val,
     bool noCallblack,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -178,21 +177,17 @@ void ValueNode::setBool(const std::string& name, bool val,
         if (_valuesBool.at(name).streamWatchers.load() > 0) {
             ServerStream->publishBool(
                 BaseNode::pwd + separator + name, 
-                val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                val, timestamp);
         }
         //Log value
         ServerLogging->logBool(
             BaseNode::pwd + separator + name, 
-            val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            val, timestamp);
     }
 }
 void ValueNode::setInt(const std::string& name, int64_t val,
     bool noCallblack,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -231,21 +226,17 @@ void ValueNode::setInt(const std::string& name, int64_t val,
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
             ServerStream->publishInt(
                 BaseNode::pwd + separator + name, 
-                val, 
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                val, timestamp);
         }
         //Log value
         ServerLogging->logInt(
             BaseNode::pwd + separator + name, 
-            val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            val, timestamp);
     }
 }
 void ValueNode::setFloat(const std::string& name, double val,
     bool noCallblack,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -284,21 +275,17 @@ void ValueNode::setFloat(const std::string& name, double val,
         if (_valuesFloat.at(name).streamWatchers.load() > 0) {
             ServerStream->publishFloat(
                 BaseNode::pwd + separator + name, 
-                val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                val, timestamp);
         }
         //Log value
         ServerLogging->logFloat(
             BaseNode::pwd + separator + name, 
-            val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            val, timestamp);
     }
 }
 void ValueNode::setStr(const std::string& name, const std::string& val,
     bool noCallblack,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -337,21 +324,17 @@ void ValueNode::setStr(const std::string& name, const std::string& val,
         if (_valuesStr.at(name).streamWatchers.load() > 0) {
             ServerStream->publishStr(
                 BaseNode::pwd + separator + name, 
-                val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                val, timestamp);
         }
         //Log value
         ServerLogging->logStr(
             BaseNode::pwd + separator + name, 
-            val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            val, timestamp);
     }
 }
 
 void ValueNode::setRTBool(const std::string& name, bool val,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     if (_valuesBool.count(name) == 0) {
         throw std::logic_error(
@@ -378,20 +361,16 @@ void ValueNode::setRTBool(const std::string& name, bool val,
         if (_valuesBool.at(name).streamWatchers.load() > 0) {
             ServerStream->publishBool(
                 BaseNode::pwd + separator + name, 
-                val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                val, timestamp);
         }
         //Log value
         ServerLogging->logBool(
             BaseNode::pwd + separator + name, 
-            val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            val, timestamp);
     }
 }
 void ValueNode::setRTInt(const std::string& name, int64_t val,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     if (_valuesInt.count(name) == 0) {
         throw std::logic_error(
@@ -418,20 +397,16 @@ void ValueNode::setRTInt(const std::string& name, int64_t val,
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
             ServerStream->publishInt(
                 BaseNode::pwd + separator + name, 
-                val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                val, timestamp);
         }
         //Log value
         ServerLogging->logInt(
             BaseNode::pwd + separator + name, 
-            val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            val, timestamp);
     }
 }
 void ValueNode::setRTFloat(const std::string& name, double val,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     if (_valuesFloat.count(name) == 0) {
         throw std::logic_error(
@@ -458,21 +433,17 @@ void ValueNode::setRTFloat(const std::string& name, double val,
         if (_valuesFloat.at(name).streamWatchers.load() > 0) {
             ServerStream->publishFloat(
                 BaseNode::pwd + separator + name, 
-                val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                val, timestamp);
         }
         //Log value
         ServerLogging->logFloat(
             BaseNode::pwd + separator + name, 
-            val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            val, timestamp);
     }
 }
 
 int64_t ValueNode::addRTInt(const std::string& name, int64_t val,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     if (_valuesInt.count(name) == 0) {
         throw std::logic_error(
@@ -486,21 +457,17 @@ int64_t ValueNode::addRTInt(const std::string& name, int64_t val,
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
             ServerStream->publishInt(
                 BaseNode::pwd + separator + name, 
-                fetch + val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                fetch + val, timestamp);
         }
         //Log value
         ServerLogging->logInt(
             BaseNode::pwd + separator + name, 
-            fetch + val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            fetch + val, timestamp);
         return fetch;
     }
 }
 int64_t ValueNode::subRTInt(const std::string& name, int64_t val,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     if (_valuesInt.count(name) == 0) {
         throw std::logic_error(
@@ -514,21 +481,17 @@ int64_t ValueNode::subRTInt(const std::string& name, int64_t val,
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
             ServerStream->publishInt(
                 BaseNode::pwd + separator + name, 
-                fetch - val,
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                fetch - val, timestamp);
         }
         ServerLogging->logInt(
             BaseNode::pwd + separator + name, 
-            fetch - val,
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            fetch - val, timestamp);
         return fetch;
     }
 }
 
 bool ValueNode::toggleRTBool(const std::string& name,
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     if (_valuesBool.count(name) == 0) {
         throw std::logic_error(
@@ -542,15 +505,11 @@ bool ValueNode::toggleRTBool(const std::string& name,
         if (_valuesBool.at(name).streamWatchers.load() > 0) {
             ServerStream->publishBool(
                 BaseNode::pwd + separator + name, 
-                (!(bool)fetch),
-                std::chrono::duration_cast<std::chrono::microseconds>
-                    (timestamp.time_since_epoch()).count());
+                (!(bool)fetch), timestamp);
         }
         ServerLogging->logBool(
             BaseNode::pwd + separator + name, 
-            (!(bool)fetch),
-            std::chrono::duration_cast<std::chrono::microseconds>
-                (timestamp.time_since_epoch()).count());
+            (!(bool)fetch), timestamp);
         return (bool)fetch;
     }
 }

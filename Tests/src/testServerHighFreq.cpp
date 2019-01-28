@@ -35,7 +35,7 @@ int main()
         auto timeNow = std::chrono::steady_clock::now();
         auto duration = timeNow - timeStart;
         RhIO::Root.setRTInt("cycle", cycle, 
-            std::chrono::steady_clock::time_point(duration));
+            std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
         cycle++;
     }
 }

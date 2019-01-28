@@ -1,6 +1,8 @@
 #ifndef RHIO_HPP
 #define RHIO_HPP
 
+#include <functional>
+#include "rhio_common/Time.hpp"
 #include "rhio_common/Protocol.hpp"
 #include "rhio_server/IONode.hpp"
 #include "rhio_server/Bind.hpp"
@@ -62,6 +64,13 @@ void reset();
  * a file of given path
  */
 void writeLogs(const std::string& filepath);
+
+/**
+ * Set the time getter function used 
+ * for default value timestamp.
+ * The given function MUST be thread safe.
+ */
+void setRhIOTimeFunc(std::function<int64_t()> func);
 
 }
 

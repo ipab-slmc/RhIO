@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <chrono>
 #include "rhio_server/FrameNode.hpp"
 #include "rhio_server/ServerPub.hpp"
 #include "RhIO.hpp"
@@ -61,7 +60,7 @@ const Frame& FrameNode::getFrame(
 void FrameNode::framePush(const std::string& name, 
     size_t width, size_t height,
     unsigned char* data, size_t size, 
-    std::chrono::steady_clock::time_point timestamp)
+    int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -80,9 +79,7 @@ void FrameNode::framePush(const std::string& name,
         if (_frames.at(name).countWatchers > 0) {
             ServerStream->publishFrame(BaseNode::pwd + separator + name, 
                 width, height, 
-                data, size,
-                std::chrono::duration_cast<std::chrono::milliseconds>
-                (timestamp.time_since_epoch()).count());
+                data, size, timestamp);
         }
     } else {
         throw std::logic_error(

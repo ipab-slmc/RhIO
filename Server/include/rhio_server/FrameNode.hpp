@@ -7,6 +7,7 @@
 #include <map>
 #include <mutex>
 
+#include "rhio_common/Time.hpp"
 #include "rhio_server/BaseNode.hpp"
 #include "rhio_common/Frame.hpp"
 
@@ -59,8 +60,7 @@ class FrameNode: public BaseNode<FrameNode>
         void framePush(const std::string& name, 
             size_t width, size_t height,
             unsigned char* data, size_t size,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
         
         /**
          * Enable or disable (increase or decrease watchers

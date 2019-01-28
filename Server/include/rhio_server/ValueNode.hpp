@@ -6,9 +6,9 @@
 #include <string>
 #include <functional>
 #include <memory>
-#include <chrono>
 #include <mutex>
 
+#include "rhio_common/Time.hpp"
 #include "rhio_common/Value.hpp"
 #include "rhio_server/BaseNode.hpp"
 
@@ -77,20 +77,16 @@ class ValueNode : public BaseNode<ValueNode>
          */
         void setBool(const std::string& name, bool val,
             bool noCallblack = false,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
         void setInt(const std::string& name, int64_t val,
             bool noCallblack = false,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
         void setFloat(const std::string& name, double val,
             bool noCallblack = false,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
         void setStr(const std::string& name, const std::string& val,
             bool noCallblack = false,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
 
         /**
          * Real time lock free version of values 
@@ -102,14 +98,11 @@ class ValueNode : public BaseNode<ValueNode>
          * the same child node is also assumed.
          */
         void setRTBool(const std::string& name, bool val,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
         void setRTInt(const std::string& name, int64_t val,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
         void setRTFloat(const std::string& name, double val,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
 
         /**
          * Real time lock free and atomically add or subtract 
@@ -123,11 +116,9 @@ class ValueNode : public BaseNode<ValueNode>
          * Bounds checks are skipped.
          */
         int64_t addRTInt(const std::string& name, int64_t val,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
         int64_t subRTInt(const std::string& name, int64_t val,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
 
         /**
          * Real time lock free and atomically negate a boolean value.
@@ -139,8 +130,7 @@ class ValueNode : public BaseNode<ValueNode>
          * the same child node is also assumed.
          */
         bool toggleRTBool(const std::string& name,
-            std::chrono::steady_clock::time_point timestamp 
-            = std::chrono::steady_clock::now());
+            int64_t timestamp = getRhIOTime());
 
         /**
          * Declare a new value with given relative name for each type.

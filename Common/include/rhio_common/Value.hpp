@@ -4,7 +4,6 @@
 #include <string>
 #include <functional>
 #include <atomic>
-#include <chrono>
 
 namespace RhIO {
 
@@ -36,8 +35,9 @@ struct ValueBase
 
     /**
      * Last updated value timestamp
+     * expressed in microseconds
      */
-    std::chrono::steady_clock::time_point timestamp;
+    int64_t timestamp;
 
     /**
      * If false, the value will not be
@@ -60,7 +60,7 @@ struct ValueBase
         comment(""),
         hasMin(false),
         hasMax(false),
-        timestamp(),
+        timestamp(0),
         persisted(false),
         streamWatchers(0)
     {

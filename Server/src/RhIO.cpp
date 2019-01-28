@@ -25,6 +25,16 @@ ServerPub* ServerStream = nullptr;
 ServerLog* ServerLogging = nullptr;
 
 /**
+ * Default initialization of 
+ * time getter function
+ */
+std::function<int64_t()> FuncGetTime = 
+    []() -> int64_t {
+        return std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::steady_clock::now().time_since_epoch()).count();
+    };
+
+/**
  * Atomic register storing the number
  * of initialized Server
  * (for main thread waiting)
@@ -247,6 +257,11 @@ void writeLogs(const std::string& filepath)
     //Dump data from log 
     //server to file
     ServerLogging->writeLogsToFile(filepath);
+}
+
+void setRhIOTimeFunc(std::function<int64_t()> func)
+{
+    FuncGetTime = func;
 }
 
 /**
