@@ -24,7 +24,7 @@ size_t DataBuffer::offset() const
 void DataBuffer::writeType(uint8_t val)
 {
     if (_offset + sizeof(uint8_t) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (write type)");
     }
 
     uint8_t* p = (uint8_t*)(_data + _offset);
@@ -34,7 +34,7 @@ void DataBuffer::writeType(uint8_t val)
 void DataBuffer::writeBool(bool val)
 {
     if (_offset + sizeof(uint8_t) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (write bool)");
     }
 
     uint8_t* p = _data + _offset;
@@ -44,7 +44,7 @@ void DataBuffer::writeBool(bool val)
 void DataBuffer::writeInt(int64_t val)
 {
     if (_offset + sizeof(int64_t) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (write int)");
     }
 
     int64_t* p = (int64_t*)(_data + _offset);
@@ -54,7 +54,7 @@ void DataBuffer::writeInt(int64_t val)
 void DataBuffer::writeFloat(double val)
 {
     if (_offset + sizeof(double) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (write float)");
     }
 
     double* p = (double*)(_data + _offset);
@@ -66,7 +66,7 @@ void DataBuffer::writeStr(const std::string& val)
     writeInt(val.length());
     
     if (_offset + val.length() > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (write str)");
     }
     
     memcpy(_data + _offset, val.c_str(), val.length());
@@ -77,7 +77,7 @@ void DataBuffer::writeData(const unsigned char* data, size_t size)
     writeInt(size);
     
     if (_offset + size > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (write data)");
     }
     
     memcpy(_data + _offset, data, size);
@@ -87,7 +87,7 @@ void DataBuffer::writeData(const unsigned char* data, size_t size)
 uint8_t DataBuffer::readType()
 {
     if (_offset + sizeof(uint8_t) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (read type)");
     }
 
     uint8_t* p = (uint8_t*)(_data + _offset);
@@ -98,7 +98,7 @@ uint8_t DataBuffer::readType()
 bool DataBuffer::readBool()
 {
     if (_offset + sizeof(uint8_t) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (read bool)");
     }
 
     uint8_t* p = _data + _offset;
@@ -109,7 +109,7 @@ bool DataBuffer::readBool()
 int64_t DataBuffer::readInt()
 {
     if (_offset + sizeof(int64_t) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (read int)");
     }
 
     int64_t* p = (int64_t*)(_data + _offset);
@@ -120,7 +120,7 @@ int64_t DataBuffer::readInt()
 double DataBuffer::readFloat()
 {
     if (_offset + sizeof(double) > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (read float)");
     }
 
     double* p = (double*)(_data + _offset);
@@ -133,7 +133,7 @@ std::string DataBuffer::readStr()
     int64_t len = readInt();
     
     if (_offset + len > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (read str)");
     }
     
     std::string str((char*)(_data + _offset), len);
@@ -146,7 +146,7 @@ unsigned char* DataBuffer::readData(size_t& size)
     size = readInt();
     
     if (_offset + size > _size) {
-        throw std::logic_error("RhIO buffer size overflow");
+        throw std::logic_error("RhIO buffer size overflow (read data)");
     }
     
     unsigned char* data = _data + _offset;
