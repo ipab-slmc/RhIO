@@ -5,10 +5,10 @@
 namespace RhIO {
 
 ServerLog::ServerLog() :
-    _bufferBool(1000000),
-    _bufferInt(1000000),
-    _bufferFloat(1000000),
-    _bufferStr(1000000),
+    _bufferBool(5000000),
+    _bufferInt(5000000),
+    _bufferFloat(5000000),
+    _bufferStr(5000000),
     _mappingBool(),
     _mappingInt(),
     _mappingFloat(),
@@ -26,48 +26,28 @@ void ServerLog::logBool(
     bool val, 
     int64_t timestamp)
 {
-    bool isOk = _bufferBool.appendFromWriter({name, timestamp, val});
-    if (!isOk) {
-        std::cout
-            << "RhIO::logBool: Dropped value: "
-            << name << std::endl;
-    }
+    _bufferBool.appendFromWriter({name, timestamp, val});
 }
 void ServerLog::logInt(
     const std::string& name, 
     int64_t val, 
     int64_t timestamp)
 {
-    bool isOk = _bufferInt.appendFromWriter({name, timestamp, val});
-    if (!isOk) {
-        std::cout
-            << "RhIO::logInt: Dropped value: "
-            << name << std::endl;
-    }
+    _bufferInt.appendFromWriter({name, timestamp, val});
 }
 void ServerLog::logFloat(
     const std::string& name, 
     double val, 
     int64_t timestamp)
 {
-    bool isOk = _bufferFloat.appendFromWriter({name, timestamp, val});
-    if (!isOk) {
-        std::cout
-            << "RhIO::logFloat: Dropped value: "
-            << name << std::endl;
-    }
+    _bufferFloat.appendFromWriter({name, timestamp, val});
 }
 void ServerLog::logStr(
     const std::string& name, 
     const std::string& val, 
     int64_t timestamp)
 {
-    bool isOk = _bufferStr.appendFromWriter({name, timestamp, val});
-    if (!isOk) {
-        std::cout
-            << "RhIO::logStr: Dropped value: "
-            << name << std::endl;
-    }
+    _bufferStr.appendFromWriter({name, timestamp, val});
 }
         
 void ServerLog::tick()

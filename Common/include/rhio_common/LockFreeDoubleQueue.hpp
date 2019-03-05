@@ -63,30 +63,6 @@ class LockFreeDoubleQueue
             while (stateOld->stillWriting.load() != 0) {
                 //Wait
             }
-
-            /*
-            //Retrieve writing buffer
-            int isOldWriting1 = _isWritingTo1.load();
-            //Reset reading buffer size
-            if (isOldWriting1) {
-                _length2.store(0);
-            } else {
-                _length1.store(0);
-            }
-            //Atomically inverse the flag
-            _isWritingTo1.fetch_xor(1);
-            //Actively wait that all writer complete 
-            //writing to old writing buffer
-            if (isOldWriting1) {
-                while (_stillWriting1.load() != 0) {
-                    //Wait
-                }
-            } else {
-                while (_stillWriting2.load() != 0) {
-                    //Wait
-                }
-            }
-            */
         }
 
         /**
