@@ -54,6 +54,7 @@ static bool serverThreadLogOver = false;
 static unsigned int portRep = PortServerRep;
 static unsigned int portPub = PortServerPub;
 static unsigned int period = 20;
+static unsigned int logLengthSecs = (unsigned int)-1;
 static bool serverStarting = false;
 
 /**
@@ -176,7 +177,11 @@ static void runServerLog()
         while (!serverThreadLogOver) {
             int64_t tsStart = std::chrono::duration_cast<std::chrono::milliseconds>(
                 std::chrono::steady_clock::now().time_since_epoch()).count();
-            server.tick();
+            if (logLengthSecs == (unsigned int)-1) {
+                server.tick((int64_t)-1);
+            } else {
+                server.tick(logLengthSecs*1000000);
+            }
             int64_t tsEnd = std::chrono::duration_cast<std::chrono::milliseconds>(
                 std::chrono::steady_clock::now().time_since_epoch()).count();
             int64_t duration = tsEnd - tsStart;
@@ -198,12 +203,14 @@ static void runServerLog()
 void start(
     unsigned int portRep_, 
     unsigned int portPub_, 
-    unsigned int period_)
+    unsigned int period_,
+    unsigned int logLengthSecs_)
 {
     serverStarting = true;
     portRep = portRep_;
     portPub = portPub_;
     period = period_;
+    logLengthSecs = logLengthSecs_;
 
     //Init atomic counter
     initServerCount = 0;

@@ -1,7 +1,7 @@
 #ifndef RHIO_SERVERLOG_HPP
 #define RHIO_SERVERLOG_HPP
 
-#include <vector>
+#include <deque>
 #include <string>
 #include <list>
 #include <mutex>
@@ -54,8 +54,10 @@ class ServerLog
         /**
          * Allocate and transfert data from RT buffer 
          * to non-RT containers.
+         * Clamp the history to given time length in microseconds.
+         * If negative, no clamping.
          */
-        void tick();
+        void tick(int64_t lengthHistory = (int64_t)-1);
 
         /**
          * Write all logged data into 
@@ -107,10 +109,10 @@ class ServerLog
         std::map<std::string, size_t> _mappingInt;
         std::map<std::string, size_t> _mappingFloat;
         std::map<std::string, size_t> _mappingStr;
-        std::vector<LogValBool> _valuesBool;
-        std::vector<LogValInt> _valuesInt;
-        std::vector<LogValFloat> _valuesFloat;
-        std::vector<LogValStr> _valuesStr;
+        std::deque<LogValBool> _valuesBool;
+        std::deque<LogValInt> _valuesInt;
+        std::deque<LogValFloat> _valuesFloat;
+        std::deque<LogValStr> _valuesStr;
         
         /**
          * Mutex protecting data during logs writing

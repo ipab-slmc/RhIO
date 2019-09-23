@@ -50,7 +50,7 @@ void ServerLog::logStr(
     _bufferStr.appendFromWriter({name, timestamp, val});
 }
         
-void ServerLog::tick()
+void ServerLog::tick(int64_t lengthHistory)
 {
     std::lock_guard<std::mutex> lock(_mutex);
     
@@ -112,8 +112,68 @@ void ServerLog::tick()
         _valuesStr.push_back({
             id, bufStr[i].timestamp, bufStr[i].value});
     }
+
+    //Retrieve the last inserted timestamp
+    int64_t lastTime = (int64_t)-1;
+    if (
+        _valuesBool.size() > 0 &&
+        (lastTime == (int64_t)-1 ||  
+        _valuesBool.back().timestamp > lastTime)
+    ) {
+        lastTime = _valuesBool.back().timestamp;
+    }
+    if (
+        _valuesInt.size() > 0 &&
+        (lastTime == (int64_t)-1 || 
+        _valuesInt.back().timestamp > lastTime)
+    ) {
+        lastTime = _valuesInt.back().timestamp;
+    }
+    if (
+        _valuesFloat.size() > 0 &&
+        (lastTime == (int64_t)-1 || 
+        _valuesFloat.back().timestamp > lastTime)
+    ) {
+        lastTime = _valuesFloat.back().timestamp;
+    }
+    if (
+        _valuesStr.size() > 0 &&
+        (lastTime == (int64_t)-1 || 
+        _valuesStr.back().timestamp > lastTime)
+    ) {
+        lastTime = _valuesStr.back().timestamp;
+    }
+
+    //Clamp history time length with respect to 
+    //lastest inserted timestamp
+    if (lengthHistory > 0) {
+        while (
+            _valuesBool.size() > 1 && 
+            _valuesBool.front().timestamp < lastTime-lengthHistory
+        ) {
+            _valuesBool.pop_front();
+        }
+        while (
+            _valuesInt.size() > 1 && 
+            _valuesInt.front().timestamp < lastTime-lengthHistory
+        ) {
+            _valuesInt.pop_front();
+        }
+        while (
+            _valuesFloat.size() > 1 && 
+            _valuesFloat.front().timestamp < lastTime-lengthHistory
+        ) {
+            _valuesFloat.pop_front();
+        }
+        while (
+            _valuesStr.size() > 1 && 
+            _valuesStr.front().timestamp < lastTime-lengthHistory
+        ) {
+            _valuesStr.pop_front();
+        }
+    }
 }
-        
+
 void ServerLog::writeLogsToFile(const std::string& filepath)
 {
     std::lock_guard<std::mutex> lock(_mutex);

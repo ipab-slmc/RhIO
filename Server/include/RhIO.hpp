@@ -36,11 +36,14 @@ extern ServerLog* ServerLogging;
  * @param portPub_ Network TCP port for streaming server.
  * @param period_ Target time period in milliseconds
  * of streaming pub server loop.
+ * @param logLength_ Maximum log time of log server 
+ * history in seconds (infinite if negative).
  */
 void start(
     unsigned int portRep_ = PortServerRep,
     unsigned int portPub_ = PortServerPub,
-    unsigned int period_ = 20);
+    unsigned int period_ = 20,
+    unsigned int logLengthSecs_ = (unsigned int)-1);
 
 /**
  * Wait for the RhIO server

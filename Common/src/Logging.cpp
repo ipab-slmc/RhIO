@@ -49,10 +49,10 @@ void RhIOWriteBinaryLog(
     const std::map<std::string, size_t>& mappingInt,
     const std::map<std::string, size_t>& mappingFloat,
     const std::map<std::string, size_t>& mappingStr,
-    const std::vector<LogValBool>& valuesBool,
-    const std::vector<LogValInt>& valuesInt,
-    const std::vector<LogValFloat>& valuesFloat,
-    const std::vector<LogValStr>& valuesStr)
+    const std::deque<LogValBool>& valuesBool,
+    const std::deque<LogValInt>& valuesInt,
+    const std::deque<LogValFloat>& valuesFloat,
+    const std::deque<LogValStr>& valuesStr)
 {
     //Write value name mapping sizes
     size_t sizeMapBool = mappingBool.size();

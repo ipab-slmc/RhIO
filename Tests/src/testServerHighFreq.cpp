@@ -10,7 +10,11 @@
 int main()
 {
     if (!RhIO::started()) {
-        RhIO::start();
+        RhIO::start(
+            RhIO::PortServerRep, 
+            RhIO::PortServerPub, 
+            20, 
+            60);
     }
     
     //Declare RhIO directories and values
