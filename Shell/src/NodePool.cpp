@@ -31,9 +31,9 @@ namespace RhIO
             std::cout << std::left;
             Terminal::setColor("white", val->persisted);
             if (fullName) {
-                std::cout << std::setw(35) << nodeVal.getName();
+                std::cout << std::setw(45) << nodeVal.getName();
             } else {
-                std::cout << std::setw(20) << nodeVal.value->name;
+                std::cout << std::setw(30) << nodeVal.value->name;
             }
             std::cout << " ";
 
@@ -41,11 +41,11 @@ namespace RhIO
             std::cout << std::setw(7) << Node::getType(val);
             Terminal::clear();
 
-            std::cout << std::setw(9) << Node::toString(val);
+            std::cout << std::setw(17) << Node::toString(val);
 
             std::cout << " ";
             Terminal::setColor("magenta", false);
-            std::cout << std::setw(25) << val->comment;
+            std::cout << std::setw(30) << val->comment;
             Terminal::clear();
 
             if (val->persisted) {

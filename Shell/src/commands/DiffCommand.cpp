@@ -41,14 +41,14 @@ namespace RhIO
                 Terminal::clear();
                 diff++;
                 std::string name = std::string("/") + nodeVal.getName() + ":";
-                std::cout << std::setw(35) << name;
+                std::cout << std::setw(45) << name;
                 
                 Terminal::setColor("red", true);
-                std::cout << std::setw(5) << Node::persistedToString(value);
+                std::cout << std::setw(17) << Node::persistedToString(value);
                 Terminal::setColor("white", false);
                 std::cout << " → ";
                 Terminal::setColor("green", true);
-                std::cout << std::setw(5) << Node::toString(value);
+                std::cout << std::setw(17) << Node::toString(value);
 
                 std::cout << std::endl;
             }

@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
 #endif
 
     shell->addAlias("ll", "ls");
+    shell->addAlias("l", "ls");
     shell->addAlias("rep", "repeat");
     shell->addAlias("del", "delay");
 
