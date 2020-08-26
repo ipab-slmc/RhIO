@@ -223,6 +223,41 @@ class ValueNode : public BaseNode<ValueNode>
          * Mutex protecting concurrent values creation
          */
         mutable std::mutex _mutex;
+        
+        /**
+         * Direct access to values structure for each type
+         * associated with given relative name 
+         * from this Node
+         * Throw logic_error exception if asked values name
+         * does not exist
+         * READ VALUE IS NOT THREAD SAFE (use only for meta information)
+         */
+        ValueBool& accessValueBool(const std::string& name);
+        ValueInt& accessValueInt(const std::string& name);
+        ValueFloat& accessValueFloat(const std::string& name);
+        ValueStr& accessValueStr(const std::string& name);
+
+        /**
+         * Assign a value to the given structure
+         * assuming real time assignment (callback not called)
+         */
+        void assignRTBool(
+            ValueBool& valueStruct,
+            double val, int64_t timestamp);
+        void assignRTInt(
+            ValueInt& valueStruct,
+            double val, int64_t timestamp);
+        void assignRTFloat(
+            ValueFloat& valueStruct,
+            double val, int64_t timestamp);
+
+        /**
+         * Allow wrapper classes to access 
+         * private methods for RT speed up
+         */
+        friend class WrapperBool;
+        friend class WrapperInt;
+        friend class WrapperFloat;
 };
 
 }

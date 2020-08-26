@@ -23,6 +23,11 @@ struct ValueBase
     std::string name;
 
     /**
+     * Cached full absolute path
+     */
+    std::string path;
+
+    /**
      * A friendly and helpful comment message
      */
     std::string comment;
@@ -57,6 +62,7 @@ struct ValueBase
      */
     ValueBase() :
         name(""),
+        path(""),
         comment(""),
         hasMin(false),
         hasMax(false),
@@ -71,6 +77,7 @@ struct ValueBase
      */
     ValueBase(const ValueBase& v) :
         name(v.name),
+        path(v.path),
         comment(v.comment),
         hasMin(v.hasMin),
         hasMax(v.hasMax),
@@ -87,6 +94,7 @@ struct ValueBase
     {
         if (this != &v) {
             name = v.name;
+            path = v.path;
             comment = v.comment;
             hasMin = v.hasMin;
             hasMax = v.hasMax;

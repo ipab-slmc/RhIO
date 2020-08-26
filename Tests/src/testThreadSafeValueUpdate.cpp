@@ -6,15 +6,17 @@
 
 void function1()
 {
+    RhIO::IONode& node = RhIO::Root.child("/test");
     for (size_t i=0;i<10000;i++) {
-        RhIO::Root.setInt("test/int", RhIO::Root.getInt("test/int")+1);
+        node.addRTInt("int", 1);
     }
 }
 
 void function2()
 {
+    RhIO::IONode& node = RhIO::Root.child("/test");
     for (size_t i=0;i<10000;i++) {
-        RhIO::Root.setInt("test/int", RhIO::Root.getInt("test/int")-1);
+        node.addRTInt("int", -1);
     }
 }
 
@@ -35,7 +37,7 @@ int main()
     t1.join();
     t2.join();
     
-    std::cout << RhIO::Root.getInt("test/int") << std::endl;
+    std::cout << RhIO::Root.getInt("/test/int") << std::endl;
 
     return 0;
 }

@@ -6,6 +6,7 @@
 #include "rhio_common/Protocol.hpp"
 #include "rhio_server/IONode.hpp"
 #include "rhio_server/Bind.hpp"
+#include "rhio_server/Wrapper.hpp"
 
 namespace RhIO {
 

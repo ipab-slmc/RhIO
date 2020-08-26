@@ -176,12 +176,12 @@ void ValueNode::setBool(const std::string& name, bool val,
         //Publish value
         if (_valuesBool.at(name).streamWatchers.load() > 0) {
             ServerStream->publishBool(
-                BaseNode::pwd + separator + name, 
+                _valuesBool[name].path,
                 val, timestamp);
         }
         //Log value
         ServerLogging->logBool(
-            BaseNode::pwd + separator + name, 
+            _valuesBool[name].path,
             val, timestamp);
     }
 }
@@ -225,12 +225,12 @@ void ValueNode::setInt(const std::string& name, int64_t val,
         //Publish value
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
             ServerStream->publishInt(
-                BaseNode::pwd + separator + name, 
+                _valuesInt[name].path,
                 val, timestamp);
         }
         //Log value
         ServerLogging->logInt(
-            BaseNode::pwd + separator + name, 
+            _valuesInt[name].path,
             val, timestamp);
     }
 }
@@ -274,12 +274,12 @@ void ValueNode::setFloat(const std::string& name, double val,
         //Publish value
         if (_valuesFloat.at(name).streamWatchers.load() > 0) {
             ServerStream->publishFloat(
-                BaseNode::pwd + separator + name, 
+                _valuesFloat[name].path,
                 val, timestamp);
         }
         //Log value
         ServerLogging->logFloat(
-            BaseNode::pwd + separator + name, 
+            _valuesFloat[name].path,
             val, timestamp);
     }
 }
@@ -323,12 +323,12 @@ void ValueNode::setStr(const std::string& name, const std::string& val,
         //Publish value
         if (_valuesStr.at(name).streamWatchers.load() > 0) {
             ServerStream->publishStr(
-                BaseNode::pwd + separator + name, 
+                _valuesStr[name].path,
                 val, timestamp);
         }
         //Log value
         ServerLogging->logStr(
-            BaseNode::pwd + separator + name, 
+            _valuesStr[name].path,
             val, timestamp);
     }
 }
@@ -341,32 +341,7 @@ void ValueNode::setRTBool(const std::string& name, bool val,
             "RhIO unknown value Bool name: '" + name + "' in '"
             + BaseNode::pwd + "'");
     } else {
-        //Bound to min/max
-        if (
-            _valuesBool.at(name).hasMin && 
-            val < _valuesBool.at(name).min
-        ) {
-            val = _valuesBool.at(name).min;
-        }
-        if (
-            _valuesBool.at(name).hasMax && 
-            val > _valuesBool.at(name).max
-        ) {
-            val = _valuesBool.at(name).max;
-        }
-        //Update value
-        _valuesBool[name].value.store(val);
-        _valuesBool[name].timestamp = timestamp;
-        //Publish value
-        if (_valuesBool.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishBool(
-                BaseNode::pwd + separator + name, 
-                val, timestamp);
-        }
-        //Log value
-        ServerLogging->logBool(
-            BaseNode::pwd + separator + name, 
-            val, timestamp);
+        assignRTBool(_valuesBool.at(name), val, timestamp);
     }
 }
 void ValueNode::setRTInt(const std::string& name, int64_t val,
@@ -377,32 +352,7 @@ void ValueNode::setRTInt(const std::string& name, int64_t val,
             "RhIO unknown value Int name: '" + name + "' in '"
             + BaseNode::pwd + "'");
     } else {
-        //Bound to min/max
-        if (
-            _valuesInt.at(name).hasMin && 
-            val < _valuesInt.at(name).min
-        ) {
-            val = _valuesInt.at(name).min;
-        }
-        if (
-            _valuesInt.at(name).hasMax && 
-            val > _valuesInt.at(name).max
-        ) {
-            val = _valuesInt.at(name).max;
-        }
-        //Update value
-        _valuesInt[name].value.store(val);
-        _valuesInt[name].timestamp = timestamp;
-        //Publish value
-        if (_valuesInt.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishInt(
-                BaseNode::pwd + separator + name, 
-                val, timestamp);
-        }
-        //Log value
-        ServerLogging->logInt(
-            BaseNode::pwd + separator + name, 
-            val, timestamp);
+        assignRTInt(_valuesInt.at(name), val, timestamp);
     }
 }
 void ValueNode::setRTFloat(const std::string& name, double val,
@@ -413,32 +363,7 @@ void ValueNode::setRTFloat(const std::string& name, double val,
             "RhIO unknown value Float name: '" + name + "' in '"
             + BaseNode::pwd + "'");
     } else {
-        //Bound to min/max
-        if (
-            _valuesFloat.at(name).hasMin && 
-            val < _valuesFloat.at(name).min
-        ) {
-            val = _valuesFloat.at(name).min;
-        }
-        if (
-            _valuesFloat.at(name).hasMax && 
-            val > _valuesFloat.at(name).max
-        ) {
-            val = _valuesFloat.at(name).max;
-        }
-        //Update value
-        _valuesFloat[name].value.store(val);
-        _valuesFloat[name].timestamp = timestamp;
-        //Publish value
-        if (_valuesFloat.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishFloat(
-                BaseNode::pwd + separator + name, 
-                val, timestamp);
-        }
-        //Log value
-        ServerLogging->logFloat(
-            BaseNode::pwd + separator + name, 
-            val, timestamp);
+        assignRTFloat(_valuesFloat.at(name), val, timestamp);
     }
 }
 
@@ -456,12 +381,12 @@ int64_t ValueNode::addRTInt(const std::string& name, int64_t val,
         //Publish value
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
             ServerStream->publishInt(
-                BaseNode::pwd + separator + name, 
+                _valuesInt[name].path,
                 fetch + val, timestamp);
         }
         //Log value
         ServerLogging->logInt(
-            BaseNode::pwd + separator + name, 
+            _valuesInt[name].path,
             fetch + val, timestamp);
         return fetch;
     }
@@ -480,11 +405,11 @@ int64_t ValueNode::subRTInt(const std::string& name, int64_t val,
         //Publish value
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
             ServerStream->publishInt(
-                BaseNode::pwd + separator + name, 
+                _valuesInt[name].path,
                 fetch - val, timestamp);
         }
         ServerLogging->logInt(
-            BaseNode::pwd + separator + name, 
+            _valuesInt[name].path,
             fetch - val, timestamp);
         return fetch;
     }
@@ -504,11 +429,11 @@ bool ValueNode::toggleRTBool(const std::string& name,
         //Publish value
         if (_valuesBool.at(name).streamWatchers.load() > 0) {
             ServerStream->publishBool(
-                BaseNode::pwd + separator + name, 
+                _valuesBool[name].path,
                 (!(bool)fetch), timestamp);
         }
         ServerLogging->logBool(
-            BaseNode::pwd + separator + name, 
+            _valuesBool[name].path,
             (!(bool)fetch), timestamp);
         return (bool)fetch;
     }
@@ -538,6 +463,7 @@ std::unique_ptr<ValueBuilderBool> ValueNode::newBool(const std::string& name)
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesBool[name] = ValueBool();
         _valuesBool[name].name = name;
+        _valuesBool[name].path = BaseNode::pwd + separator + name;
         return std::unique_ptr<ValueBuilderBool>(
             new ValueBuilderBool(_valuesBool[name], false));
     }
@@ -566,6 +492,7 @@ std::unique_ptr<ValueBuilderInt> ValueNode::newInt(const std::string& name)
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesInt[name] = ValueInt();
         _valuesInt[name].name = name;
+        _valuesInt[name].path = BaseNode::pwd + separator + name; 
         return std::unique_ptr<ValueBuilderInt>(
             new ValueBuilderInt(_valuesInt[name], false));
     }
@@ -594,6 +521,7 @@ std::unique_ptr<ValueBuilderFloat> ValueNode::newFloat(const std::string& name)
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesFloat[name] = ValueFloat();
         _valuesFloat[name].name = name;
+        _valuesFloat[name].path = BaseNode::pwd + separator + name; 
         return std::unique_ptr<ValueBuilderFloat>(
             new ValueBuilderFloat(_valuesFloat[name], false));
     }
@@ -622,6 +550,7 @@ std::unique_ptr<ValueBuilderStr> ValueNode::newStr(const std::string& name)
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesStr[name] = ValueStr();
         _valuesStr[name].name = name;
+        _valuesStr[name].path = BaseNode::pwd + separator + name; 
         return std::unique_ptr<ValueBuilderStr>(
             new ValueBuilderStr(_valuesStr[name], false));
     }
@@ -1067,6 +996,7 @@ void ValueNode::loadValues(const std::string& path)
                     if (_valuesBool.count(name) == 0) {
                         _valuesBool[name] = ValueBool();
                         _valuesBool[name].name = name;
+                        _valuesBool[name].path = BaseNode::pwd + separator + name, 
                         ValueBuilderBool(_valuesBool[name], false);
                     }
                     _valuesBool.at(name).value = it.second.as<bool>();
@@ -1076,6 +1006,7 @@ void ValueNode::loadValues(const std::string& path)
                     if (_valuesStr.count(name) == 0) {
                         _valuesStr[name] = ValueStr();
                         _valuesStr[name].name = name;
+                        _valuesStr[name].path = BaseNode::pwd + separator + name, 
                         ValueBuilderStr(_valuesStr[name], false);
                     }
                     _valuesStr.at(name).value = it.second.as<std::string>();
@@ -1086,6 +1017,7 @@ void ValueNode::loadValues(const std::string& path)
                 if (_valuesFloat.count(name) == 0) {
                     _valuesFloat[name] = ValueFloat();
                     _valuesFloat[name].name = name;
+                    _valuesFloat[name].path = BaseNode::pwd + separator + name, 
                     ValueBuilderFloat(_valuesFloat[name], false);
                 }
                 _valuesFloat.at(name).value = it.second.as<double>();
@@ -1095,6 +1027,7 @@ void ValueNode::loadValues(const std::string& path)
                 if (_valuesInt.count(name) == 0) {
                     _valuesInt[name] = ValueInt();
                     _valuesInt[name].name = name;
+                    _valuesInt[name].path = BaseNode::pwd + separator + name, 
                     ValueBuilderInt(_valuesInt[name], false);
                 }
                 _valuesInt.at(name).value = it.second.as<int64_t>();
@@ -1108,6 +1041,161 @@ void ValueNode::loadValues(const std::string& path)
         throw std::runtime_error(
             "RhIO invalid format (root type)");
     }
+}
+
+ValueBool& ValueNode::accessValueBool(const std::string& name)
+{
+    //Forward to subtree
+    std::string tmpName;
+    ValueNode* child = BaseNode::forwardFunc(name, tmpName, false);
+    if (child != nullptr) return child->accessValueBool(tmpName);
+
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (_valuesBool.count(name) == 0) {
+        throw std::logic_error("RhIO unknown value Bool name: '" + name + "' in '"
+            + BaseNode::pwd + "'");
+    } else {
+        return _valuesBool.at(name);
+    }
+}
+ValueInt& ValueNode::accessValueInt(const std::string& name)
+{
+    //Forward to subtree
+    std::string tmpName;
+    ValueNode* child = BaseNode::forwardFunc(name, tmpName, false);
+    if (child != nullptr) return child->accessValueInt(tmpName);
+
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (_valuesInt.count(name) == 0) {
+        throw std::logic_error("RhIO unknown value Int name: '" + name + "' in '"
+            + BaseNode::pwd + "'");
+    } else {
+        return _valuesInt.at(name);
+    }
+}
+ValueFloat& ValueNode::accessValueFloat(const std::string& name)
+{
+    //Forward to subtree
+    std::string tmpName;
+    ValueNode* child = BaseNode::forwardFunc(name, tmpName, false);
+    if (child != nullptr) return child->accessValueFloat(tmpName);
+
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (_valuesFloat.count(name) == 0) {
+        throw std::logic_error("RhIO unknown value Float name: '" + name + "' in '"
+            + BaseNode::pwd + "'");
+    } else {
+        return _valuesFloat.at(name);
+    }
+}
+ValueStr& ValueNode::accessValueStr(const std::string& name)
+{
+    //Forward to subtree
+    std::string tmpName;
+    ValueNode* child = BaseNode::forwardFunc(name, tmpName, false);
+    if (child != nullptr) return child->accessValueStr(tmpName);
+
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (_valuesStr.count(name) == 0) {
+        throw std::logic_error("RhIO unknown value Str name: '" + name + "' in '"
+            + BaseNode::pwd + "'");
+    } else {
+        return _valuesStr.at(name);
+    }
+}
+
+void ValueNode::assignRTBool(
+    ValueBool& valueStruct,
+    double val, int64_t timestamp)
+{
+    //Bound to min/max
+    if (
+        valueStruct.hasMin && 
+        val < valueStruct.min
+    ) {
+        val = valueStruct.min;
+    }
+    if (
+        valueStruct.hasMax && 
+        val > valueStruct.max
+    ) {
+        val = valueStruct.max;
+    }
+    //Update value
+    valueStruct.value.store(val);
+    valueStruct.timestamp = timestamp;
+    //Publish value
+    if (valueStruct.streamWatchers.load() > 0) {
+        ServerStream->publishBool(
+            valueStruct.path,
+            val, timestamp);
+    }
+    //Log value
+    ServerLogging->logBool(
+        valueStruct.path,
+        val, timestamp);
+}
+void ValueNode::assignRTInt(
+    ValueInt& valueStruct,
+    double val, int64_t timestamp)
+{
+    //Bound to min/max
+    if (
+        valueStruct.hasMin && 
+        val < valueStruct.min
+    ) {
+        val = valueStruct.min;
+    }
+    if (
+        valueStruct.hasMax && 
+        val > valueStruct.max
+    ) {
+        val = valueStruct.max;
+    }
+    //Update value
+    valueStruct.value.store(val);
+    valueStruct.timestamp = timestamp;
+    //Publish value
+    if (valueStruct.streamWatchers.load() > 0) {
+        ServerStream->publishInt(
+            valueStruct.path,
+            val, timestamp);
+    }
+    //Log value
+    ServerLogging->logInt(
+        valueStruct.path,
+        val, timestamp);
+}
+void ValueNode::assignRTFloat(
+    ValueFloat& valueStruct,
+    double val, int64_t timestamp)
+{
+    //Bound to min/max
+    if (
+        valueStruct.hasMin && 
+        val < valueStruct.min
+    ) {
+        val = valueStruct.min;
+    }
+    if (
+        valueStruct.hasMax && 
+        val > valueStruct.max
+    ) {
+        val = valueStruct.max;
+    }
+    //Update value
+    valueStruct.value.store(val);
+    valueStruct.timestamp = timestamp;
+    //Publish value
+    if (valueStruct.streamWatchers.load() > 0) {
+        ServerStream->publishFloat(
+            valueStruct.path,
+            val, timestamp);
+    }
+    //Log value
+    ServerLogging->logFloat(
+        valueStruct.path,
+        val, timestamp);
 }
 
 }
