@@ -136,7 +136,8 @@ int main()
         RhIO::WrapperFloat w3(RhIO::Root.child("/path/to/child"), "val3");
         RhIO::WrapperFloat w4(RhIO::Root.child("/path/to/child"), "val4");
         RhIO::WrapperFloat w5(RhIO::Root.child("/path/to/child"), "val5");
-        RhIO::WrapperFloat w6(RhIO::Root.child("/path/to/child"), "val6");
+        RhIO::WrapperFloat w6;
+        w6.bind(RhIO::Root.child("/path/to/child"), "val6");
         auto time1 = std::chrono::steady_clock::now();
         for (size_t i=0;i<10000;i++) {
             w1.set(42.0);

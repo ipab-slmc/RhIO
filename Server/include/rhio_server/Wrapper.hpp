@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <stdexcept>
 #include "RhIO.hpp"
 #include "rhio_common/Value.hpp"
 #include "rhio_server/ValueNode.hpp"
@@ -21,6 +22,15 @@ class WrapperBool
     public:
         
         /**
+         * Default uninitialized
+         */
+        WrapperBool() :
+            _node(nullptr),
+            _ptrValue(nullptr)
+        {
+        }
+
+        /**
          * Initialize with a RhIO node and the name of 
          * an existing boolean value stored within it
          */
@@ -33,10 +43,32 @@ class WrapperBool
         }
 
         /**
+         * Bind the wrapper to given RhIO node and given
+         * name of existing boolean stored within it.
+         * Only if the wrapper is still uninitialized.
+         */
+        void bind(
+            IONode& node,
+            const std::string& name)
+        {
+            if (_node != nullptr || _ptrValue != nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperBool::bind: "
+                    "Wrapper already assigned");
+            }
+            _node = &node;
+            _ptrValue = &(node.accessValueBool(name));
+        }
+
+        /**
          * Return the boolean value
          */
         double get() const
         {
+            if (_ptrValue == nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperBool::get: uninitialized");
+            }
             return _ptrValue->value.load();
         }
         operator bool() const 
@@ -52,6 +84,10 @@ class WrapperBool
             bool val,
             int64_t timestamp = getRhIOTime())
         {
+            if (_node == nullptr || _ptrValue == nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperBool::set: uninitialized");
+            }
             _node->assignRTBool(*_ptrValue, val, timestamp);
         }
         void operator=(bool val) 
@@ -67,12 +103,20 @@ class WrapperBool
          */
         IONode* _node;
         ValueBool* _ptrValue;
-
 };
 class WrapperInt
 {
     public:
         
+        /**
+         * Default uninitialized
+         */
+        WrapperInt() :
+            _node(nullptr),
+            _ptrValue(nullptr)
+        {
+        }
+
         /**
          * Initialize with a RhIO node and the name of 
          * an existing int value stored within it
@@ -86,10 +130,32 @@ class WrapperInt
         }
 
         /**
+         * Bind the wrapper to given RhIO node and given
+         * name of existing integer stored within it.
+         * Only if the wrapper is still uninitialized.
+         */
+        void bind(
+            IONode& node,
+            const std::string& name)
+        {
+            if (_node != nullptr || _ptrValue != nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperInt::bind: "
+                    "Wrapper already assigned");
+            }
+            _node = &node;
+            _ptrValue = &(node.accessValueInt(name));
+        }
+
+        /**
          * Return the integer value
          */
         double get() const
         {
+            if (_ptrValue == nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperInt::get: uninitialized");
+            }
             return _ptrValue->value.load();
         }
         operator int64_t() const 
@@ -109,6 +175,10 @@ class WrapperInt
             int64_t val,
             int64_t timestamp = getRhIOTime())
         {
+            if (_node == nullptr || _ptrValue == nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperInt::set: uninitialized");
+            }
             _node->assignRTInt(*_ptrValue, val, timestamp);
         }
         void operator=(int64_t val) 
@@ -128,12 +198,20 @@ class WrapperInt
          */
         IONode* _node;
         ValueInt* _ptrValue;
-
 };
 class WrapperFloat
 {
     public:
         
+        /**
+         * Default uninitialized
+         */
+        WrapperFloat() :
+            _node(nullptr),
+            _ptrValue(nullptr)
+        {
+        }
+
         /**
          * Initialize with a RhIO node and the name of 
          * an existing float value stored within it
@@ -147,10 +225,32 @@ class WrapperFloat
         }
 
         /**
+         * Bind the wrapper to given RhIO node and given
+         * name of existing float stored within it.
+         * Only if the wrapper is still uninitialized.
+         */
+        void bind(
+            IONode& node,
+            const std::string& name)
+        {
+            if (_node != nullptr || _ptrValue != nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperFloat::bind: "
+                    "Wrapper already assigned");
+            }
+            _node = &node;
+            _ptrValue = &(node.accessValueFloat(name));
+        }
+
+        /**
          * Return the float value
          */
         double get() const
         {
+            if (_ptrValue == nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperFloat::get: uninitialized");
+            }
             return _ptrValue->value.load();
         }
         operator double() const 
@@ -170,6 +270,10 @@ class WrapperFloat
             double val,
             int64_t timestamp = getRhIOTime())
         {
+            if (_node == nullptr || _ptrValue == nullptr) {
+                throw std::logic_error(
+                    "RhIO::WrapperFloat::set: uninitialized");
+            }
             _node->assignRTFloat(*_ptrValue, val, timestamp);
         }
         void operator=(double val) 
@@ -189,7 +293,6 @@ class WrapperFloat
          */
         IONode* _node;
         ValueFloat* _ptrValue;
-
 };
 
 }
