@@ -14,12 +14,14 @@ int StreamBuffer::sync()
 {
     //Publish the stream
     if (_streamWatchers > 0) {
-        ServerStream->publishStream(
-            _pwd, 
-            str(),
-            std::chrono::duration_cast<std::chrono::milliseconds>
-                (std::chrono::steady_clock::now()
-                 .time_since_epoch()).count());
+        if (ServerStream != nullptr) {
+            ServerStream->publishStream(
+                _pwd, 
+                str(),
+                std::chrono::duration_cast<std::chrono::milliseconds>
+                    (std::chrono::steady_clock::now()
+                     .time_since_epoch()).count());
+        }
     }
     //Clear buffer
     str("");

@@ -175,14 +175,18 @@ void ValueNode::setBool(const std::string& name, bool val,
         }
         //Publish value
         if (_valuesBool.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishBool(
+            if (ServerStream != nullptr) {
+                ServerStream->publishBool(
+                    _valuesBool[name].path,
+                    val, timestamp);
+            }
+        }
+        //Log value
+        if (ServerLogging != nullptr) {
+            ServerLogging->logBool(
                 _valuesBool[name].path,
                 val, timestamp);
         }
-        //Log value
-        ServerLogging->logBool(
-            _valuesBool[name].path,
-            val, timestamp);
     }
 }
 void ValueNode::setInt(const std::string& name, int64_t val,
@@ -224,14 +228,18 @@ void ValueNode::setInt(const std::string& name, int64_t val,
         }
         //Publish value
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishInt(
+            if (ServerStream != nullptr) {
+                ServerStream->publishInt(
+                    _valuesInt[name].path,
+                    val, timestamp);
+            }
+        }
+        //Log value
+        if (ServerLogging != nullptr) {
+            ServerLogging->logInt(
                 _valuesInt[name].path,
                 val, timestamp);
         }
-        //Log value
-        ServerLogging->logInt(
-            _valuesInt[name].path,
-            val, timestamp);
     }
 }
 void ValueNode::setFloat(const std::string& name, double val,
@@ -273,14 +281,18 @@ void ValueNode::setFloat(const std::string& name, double val,
         }
         //Publish value
         if (_valuesFloat.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishFloat(
+            if (ServerStream != nullptr) {
+                ServerStream->publishFloat(
+                    _valuesFloat[name].path,
+                    val, timestamp);
+            }
+        }
+        //Log value
+        if (ServerLogging != nullptr) {
+            ServerLogging->logFloat(
                 _valuesFloat[name].path,
                 val, timestamp);
         }
-        //Log value
-        ServerLogging->logFloat(
-            _valuesFloat[name].path,
-            val, timestamp);
     }
 }
 void ValueNode::setStr(const std::string& name, const std::string& val,
@@ -322,14 +334,18 @@ void ValueNode::setStr(const std::string& name, const std::string& val,
         }
         //Publish value
         if (_valuesStr.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishStr(
+            if (ServerStream != nullptr) {
+                ServerStream->publishStr(
+                    _valuesStr[name].path,
+                    val, timestamp);
+            }
+        }
+        //Log value
+        if (ServerLogging != nullptr) {
+            ServerLogging->logStr(
                 _valuesStr[name].path,
                 val, timestamp);
         }
-        //Log value
-        ServerLogging->logStr(
-            _valuesStr[name].path,
-            val, timestamp);
     }
 }
 
@@ -380,14 +396,18 @@ int64_t ValueNode::addRTInt(const std::string& name, int64_t val,
         _valuesInt[name].timestamp = timestamp;
         //Publish value
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishInt(
+            if (ServerStream != nullptr) {
+                ServerStream->publishInt(
+                    _valuesInt[name].path,
+                    fetch + val, timestamp);
+            }
+        }
+        //Log value
+        if (ServerLogging != nullptr) {
+            ServerLogging->logInt(
                 _valuesInt[name].path,
                 fetch + val, timestamp);
         }
-        //Log value
-        ServerLogging->logInt(
-            _valuesInt[name].path,
-            fetch + val, timestamp);
         return fetch;
     }
 }
@@ -404,13 +424,17 @@ int64_t ValueNode::subRTInt(const std::string& name, int64_t val,
         _valuesInt[name].timestamp = timestamp;
         //Publish value
         if (_valuesInt.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishInt(
+            if (ServerStream != nullptr) {
+                ServerStream->publishInt(
+                    _valuesInt[name].path,
+                    fetch - val, timestamp);
+            }
+        }
+        if (ServerLogging != nullptr) {
+            ServerLogging->logInt(
                 _valuesInt[name].path,
                 fetch - val, timestamp);
         }
-        ServerLogging->logInt(
-            _valuesInt[name].path,
-            fetch - val, timestamp);
         return fetch;
     }
 }
@@ -428,13 +452,17 @@ bool ValueNode::toggleRTBool(const std::string& name,
         _valuesBool[name].timestamp = timestamp;
         //Publish value
         if (_valuesBool.at(name).streamWatchers.load() > 0) {
-            ServerStream->publishBool(
+            if (ServerStream != nullptr) {
+                ServerStream->publishBool(
+                    _valuesBool[name].path,
+                    (!(bool)fetch), timestamp);
+            }
+        }
+        if (ServerLogging != nullptr) {
+            ServerLogging->logBool(
                 _valuesBool[name].path,
                 (!(bool)fetch), timestamp);
         }
-        ServerLogging->logBool(
-            _valuesBool[name].path,
-            (!(bool)fetch), timestamp);
         return (bool)fetch;
     }
 }
@@ -1126,14 +1154,18 @@ void ValueNode::assignRTBool(
     valueStruct.timestamp = timestamp;
     //Publish value
     if (valueStruct.streamWatchers.load() > 0) {
-        ServerStream->publishBool(
+        if (ServerStream != nullptr) {
+            ServerStream->publishBool(
+                valueStruct.path,
+                val, timestamp);
+        }
+    }
+    //Log value
+    if (ServerLogging != nullptr) {
+        ServerLogging->logBool(
             valueStruct.path,
             val, timestamp);
     }
-    //Log value
-    ServerLogging->logBool(
-        valueStruct.path,
-        val, timestamp);
 }
 void ValueNode::assignRTInt(
     ValueInt& valueStruct,
@@ -1157,14 +1189,18 @@ void ValueNode::assignRTInt(
     valueStruct.timestamp = timestamp;
     //Publish value
     if (valueStruct.streamWatchers.load() > 0) {
-        ServerStream->publishInt(
+        if (ServerStream != nullptr) {
+            ServerStream->publishInt(
+                valueStruct.path,
+                val, timestamp);
+        }
+    }
+    //Log value
+    if (ServerLogging != nullptr) {
+        ServerLogging->logInt(
             valueStruct.path,
             val, timestamp);
     }
-    //Log value
-    ServerLogging->logInt(
-        valueStruct.path,
-        val, timestamp);
 }
 void ValueNode::assignRTFloat(
     ValueFloat& valueStruct,
@@ -1188,14 +1224,18 @@ void ValueNode::assignRTFloat(
     valueStruct.timestamp = timestamp;
     //Publish value
     if (valueStruct.streamWatchers.load() > 0) {
-        ServerStream->publishFloat(
+        if (ServerStream != nullptr) {
+            ServerStream->publishFloat(
+                valueStruct.path,
+                val, timestamp);
+        }
+    }
+    //Log value
+    if (ServerLogging != nullptr) {
+        ServerLogging->logFloat(
             valueStruct.path,
             val, timestamp);
     }
-    //Log value
-    ServerLogging->logFloat(
-        valueStruct.path,
-        val, timestamp);
 }
 
 }

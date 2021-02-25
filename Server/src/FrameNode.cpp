@@ -77,9 +77,11 @@ void FrameNode::framePush(const std::string& name,
                 "RhIO frame size seems wrong: " + name);
         }
         if (_frames.at(name).countWatchers > 0) {
-            ServerStream->publishFrame(BaseNode::pwd + separator + name, 
-                width, height, 
-                data, size, timestamp);
+            if (ServerStream != nullptr) {
+                ServerStream->publishFrame(BaseNode::pwd + separator + name, 
+                    width, height, 
+                    data, size, timestamp);
+            }
         }
     } else {
         throw std::logic_error(
