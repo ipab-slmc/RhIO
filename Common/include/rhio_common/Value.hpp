@@ -259,11 +259,16 @@ struct ValueBuilder final
         /**
          * Initialization with built
          * value reference and flag indicating if
-         * the underlying value is brand new or not
+         * the underlying value is brand new or not, 
+         * and an optional callback of finalize the value creation
          */
-        ValueBuilder(Value<TypeVal, TypeRaw>& val, bool isExisting) :
+        ValueBuilder(
+            Value<TypeVal, TypeRaw>& val, 
+            bool isExisting, 
+            std::function<void(Value<TypeVal, TypeRaw>&)> callback = [](Value<TypeVal, TypeRaw>&){}) :
             _isExisting(isExisting),
-            _value(val)
+            _value(val),
+            _callbackFinalize(callback)
         {
             //Default value parameters
             if (!isExisting) {
@@ -276,6 +281,14 @@ struct ValueBuilder final
                 _value.streamWatchers = 0;
                 _value.callback = [](TypeRaw t){(void)t;};
             }
+        }
+
+        /**
+         * Destructor as the end of value initialization
+         */
+        ~ValueBuilder()
+        {
+            _callbackFinalize(_value);
         }
 
         /**
@@ -324,6 +337,12 @@ struct ValueBuilder final
          * Internal built reference instance
          */
         Value<TypeVal, TypeRaw>& _value;
+
+        /**
+         * An optional callback at 
+         * the end of value creation
+         */
+        std::function<void(Value<TypeVal, TypeRaw>&)> _callbackFinalize;
 };
 
 /**

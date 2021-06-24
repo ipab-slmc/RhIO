@@ -8,7 +8,7 @@
 #include "RhIO.hpp"
 
 namespace RhIO {
-        
+
 ValueNode& ValueNode::operator=(const ValueNode& node)
 {
     _valuesBool = node._valuesBool;
@@ -467,7 +467,37 @@ bool ValueNode::toggleRTBool(const std::string& name,
     }
 }
 
-std::unique_ptr<ValueBuilderBool> ValueNode::newBool(const std::string& name)
+/**
+ * Callback logging newly created persisted value
+ * (log default parameter values)
+ */
+static std::function<void(ValueBool& val)> callbackNewBool = [](ValueBool& val) {
+    if (val.persisted) {
+        if (ServerLogging != nullptr) {
+            ServerLogging->logBool(
+                val.path, val.value, val.timestamp);
+        }
+    }
+};
+static std::function<void(ValueInt& val)> callbackNewInt = [](ValueInt& val) {
+    if (val.persisted) {
+        if (ServerLogging != nullptr) {
+            ServerLogging->logInt(
+                val.path, val.value, val.timestamp);
+        }
+    }
+};
+static std::function<void(ValueFloat& val)> callbackNewFloat = [](ValueFloat& val) {
+    if (val.persisted) {
+        if (ServerLogging != nullptr) {
+            ServerLogging->logFloat(
+                val.path, val.value, val.timestamp);
+        }
+    }
+};
+
+std::unique_ptr<ValueBuilderBool> ValueNode::newBool(
+    const std::string& name, int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -484,19 +514,21 @@ std::unique_ptr<ValueBuilderBool> ValueNode::newBool(const std::string& name)
         } else {
             //No conflic
             return std::unique_ptr<ValueBuilderBool>(
-                new ValueBuilderBool(_valuesBool[name], true));
+                new ValueBuilderBool(_valuesBool[name], true, callbackNewBool));
         }
     } else {
         //Creating a really new value
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesBool[name] = ValueBool();
         _valuesBool[name].name = name;
+        _valuesBool[name].timestamp = timestamp;
         _valuesBool[name].path = BaseNode::pwd + separator + name;
         return std::unique_ptr<ValueBuilderBool>(
-            new ValueBuilderBool(_valuesBool[name], false));
+            new ValueBuilderBool(_valuesBool[name], false, callbackNewBool));
     }
 }
-std::unique_ptr<ValueBuilderInt> ValueNode::newInt(const std::string& name)
+std::unique_ptr<ValueBuilderInt> ValueNode::newInt(
+    const std::string& name, int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -513,19 +545,21 @@ std::unique_ptr<ValueBuilderInt> ValueNode::newInt(const std::string& name)
         } else {
             //No conflic
             return std::unique_ptr<ValueBuilderInt>(
-                new ValueBuilderInt(_valuesInt[name], true));
+                new ValueBuilderInt(_valuesInt[name], true, callbackNewInt));
         }
     } else {
         //Creating a really new value
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesInt[name] = ValueInt();
         _valuesInt[name].name = name;
+        _valuesInt[name].timestamp = timestamp;
         _valuesInt[name].path = BaseNode::pwd + separator + name; 
         return std::unique_ptr<ValueBuilderInt>(
-            new ValueBuilderInt(_valuesInt[name], false));
+            new ValueBuilderInt(_valuesInt[name], false, callbackNewInt));
     }
 }
-std::unique_ptr<ValueBuilderFloat> ValueNode::newFloat(const std::string& name)
+std::unique_ptr<ValueBuilderFloat> ValueNode::newFloat(
+    const std::string& name, int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -542,19 +576,21 @@ std::unique_ptr<ValueBuilderFloat> ValueNode::newFloat(const std::string& name)
         } else {
             //No conflic
             return std::unique_ptr<ValueBuilderFloat>(
-                new ValueBuilderFloat(_valuesFloat[name], true));
+                new ValueBuilderFloat(_valuesFloat[name], true, callbackNewFloat));
         }
     } else {
         //Creating a really new value
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesFloat[name] = ValueFloat();
         _valuesFloat[name].name = name;
+        _valuesFloat[name].timestamp = timestamp;
         _valuesFloat[name].path = BaseNode::pwd + separator + name; 
         return std::unique_ptr<ValueBuilderFloat>(
-            new ValueBuilderFloat(_valuesFloat[name], false));
+            new ValueBuilderFloat(_valuesFloat[name], false, callbackNewFloat));
     }
 }
-std::unique_ptr<ValueBuilderStr> ValueNode::newStr(const std::string& name)
+std::unique_ptr<ValueBuilderStr> ValueNode::newStr(
+    const std::string& name, int64_t timestamp)
 {
     //Forward to subtree
     std::string tmpName;
@@ -578,6 +614,7 @@ std::unique_ptr<ValueBuilderStr> ValueNode::newStr(const std::string& name)
         std::lock_guard<std::mutex> lock(_mutex);
         _valuesStr[name] = ValueStr();
         _valuesStr[name].name = name;
+        _valuesStr[name].timestamp = timestamp;
         _valuesStr[name].path = BaseNode::pwd + separator + name; 
         return std::unique_ptr<ValueBuilderStr>(
             new ValueBuilderStr(_valuesStr[name], false));

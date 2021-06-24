@@ -138,10 +138,14 @@ class ValueNode : public BaseNode<ValueNode>
          * ValueBuilder is returned in order to be able to set optional
          * value parameters.
          */
-        std::unique_ptr<ValueBuilderBool> newBool(const std::string& name);
-        std::unique_ptr<ValueBuilderInt> newInt(const std::string& name);
-        std::unique_ptr<ValueBuilderFloat> newFloat(const std::string& name);
-        std::unique_ptr<ValueBuilderStr> newStr(const std::string& name);
+        std::unique_ptr<ValueBuilderBool> newBool(
+            const std::string& name, int64_t timestamp = getRhIOTime());
+        std::unique_ptr<ValueBuilderInt> newInt(
+            const std::string& name, int64_t timestamp = getRhIOTime());
+        std::unique_ptr<ValueBuilderFloat> newFloat(
+            const std::string& name, int64_t timestamp = getRhIOTime());
+        std::unique_ptr<ValueBuilderStr> newStr(
+            const std::string& name, int64_t timestamp = getRhIOTime());
 
         /**
          * Set a callback function that will be called
